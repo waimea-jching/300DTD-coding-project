@@ -26,31 +26,29 @@ import javax.swing.*
  */
 
 
+//Display Object
+lateinit var display : Display
+lateinit var player : Player
+
 fun main(){
     Awake()
 }
-
-lateinit var label : JLabel
-var move : Int = 0
 
 fun Awake(){
     // Flat, Dark look-and-feel
     FlatDarkLaf.setup()
 
-    // Create the UI
-    SetupFrame()
+    // Create the display
+    SetupDisplay()
     SetupTimers()
 
-    label = JLabel("ahhhhhh", SwingConstants.CENTER)
-    label.bounds = Rectangle(30, 30, 240, 50)
-    display.title = "ahhhhhhh"
-    display.add(label)
+    player = Player(display)
+    KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(player)
 }
 
 fun Update(){
-    move ++
-    label.bounds = Rectangle(move, 30, 240, 50)
-    display.add(label)
+    player.playerCollisionCheck()
+    player.movePlayer()
 }
 
 

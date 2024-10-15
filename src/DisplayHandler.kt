@@ -11,13 +11,11 @@ import javax.swing.*
 //=============================================================================================
 
 
-lateinit var display : Display
+class Display : JFrame(){
+    //Configuration Settings
+    private val displayName: String = "Tomb Run"
+    private val displaySize : Dimension = Dimension(800, 600)
 
-//Configuration Settings
-val displayName: String = "Tomb Run"
-val displaySize : Dimension = Dimension(800, 600)
-
-class Display : JFrame(), ActionListener {
     init {
         setupWindow()
 
@@ -50,15 +48,9 @@ class Display : JFrame(), ActionListener {
 //        exampleButton.addActionListener(this)
 //        add(exampleButton)
 //    }
-
-    override fun actionPerformed(e: ActionEvent?) {
-//        when (e?.source) {
-//            exampleButton -> exampleAction()
-//        }
-    }
 }
 
-fun SetupFrame() {
+fun SetupDisplay() {
     display = Display()
 }
 

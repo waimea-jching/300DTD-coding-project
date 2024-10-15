@@ -10,12 +10,10 @@ import javax.swing.*
 
 
 //Variables
-private val frameRatePS : Int = 1
-var runningTime : Float = 0f
+private val frameRatePS : Int = 30
 
 //Timers
 private lateinit var updateTimer: Timer
-private lateinit var time: Timer
 
 fun SetupTimers() {
     val update = ActionListener {
@@ -23,11 +21,4 @@ fun SetupTimers() {
     }
     updateTimer = Timer((1000/ frameRatePS), update)
     updateTimer.start()
-
-
-    val timeDelta = ActionListener {
-        runningTime += 0.001f
-    }
-    time = Timer(1, update)
-    time.start()
 }

@@ -24,7 +24,6 @@ class Collider(private val initialBounds : Rectangle, currentDisplay: Display){
         if (colliderBound.y == 0) collisionDirection = Dimension(collisionDirection.width, -1)
         if ((colliderBound.x + colliderBound.width) == displaySize.width) collisionDirection = Dimension(1,collisionDirection.height)
         if ((colliderBound.y + colliderBound.height) == displaySize.height) collisionDirection = Dimension(collisionDirection.width, 1)
-        else collisionDirection = Dimension(0,0)
 
         return collisionDirection
     }

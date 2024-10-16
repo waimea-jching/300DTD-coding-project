@@ -47,9 +47,13 @@ fun Awake(){
 }
 
 fun Update(){
-    player.playerCollisionCheck()
     player.movePlayer()
 }
+
+fun PhysicsUpdate(){
+    player.playerCollisionCheck()
+}
+
 
 
 

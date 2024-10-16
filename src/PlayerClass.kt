@@ -36,7 +36,7 @@ class Player(val currentDisplay: Display): JLabel("*", SwingConstants.CENTER), K
         var newPosition = currentPosition
 
         if (!isColliding) {
-            newPosition.x += ((horizontalInput * moveSpeed))
+            newPosition.x += (horizontalInput * moveSpeed)
             newPosition.y += (verticalInput * moveSpeed)
             bounds = newPosition
         }
@@ -44,13 +44,11 @@ class Player(val currentDisplay: Display): JLabel("*", SwingConstants.CENTER), K
             val collisionDirection : Dimension = playerCollider.getCollisionDirection()
             if (collisionDirection.width != horizontalInput) newPosition.x += ((horizontalInput * moveSpeed))
             if (collisionDirection.height != verticalInput) newPosition.y += ((verticalInput * moveSpeed))
+            bounds = newPosition
         }
 
         playerCollider.updateCollider(newPosition)
         currentDisplay.add(this)
-
-        println(verticalInput)
-        println(horizontalInput)
     }
 
     fun playerCollisionCheck(){

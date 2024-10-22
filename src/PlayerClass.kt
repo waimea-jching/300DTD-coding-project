@@ -14,7 +14,7 @@ import javax.swing.SwingConstants
 //=============================================================================================
 
 
-class Player(val gameDisplay: Display): JLabel(), KeyEventDispatcher {
+class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
     private var verticalInput : Int = 0
     private var horizontalInput : Int = 0
 

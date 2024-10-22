@@ -3,7 +3,6 @@
 
 import java.awt.event.ActionListener
 import javax.swing.Timer
-import javax.swing.*
 
 
 //=============================================================================================
@@ -11,18 +10,18 @@ import javax.swing.*
 
 //Timer Speeds
 private val frameRate : Int = 30 /*ticks per second*/
-private val physicsTick : Int = frameRate * 2/*ticks per second*/
+private val fixedUpdateTick : Int = frameRate * 2/*ticks per second*/
 
 //Timer Variables
 private lateinit var updateTimer: Timer
-private lateinit var physicsTimer: Timer
+private lateinit var fixedUpdateTimer: Timer
 
 fun SetupTimers() {
-    val physicsListener = ActionListener {
-        PhysicsUpdate()
+    val fixedUpdateListener = ActionListener {
+        FixedUpdate()
     }
-    physicsTimer = Timer((1000/ physicsTick), physicsListener)
-    physicsTimer.start()
+    fixedUpdateTimer = Timer((1000/ fixedUpdateTick), fixedUpdateListener)
+    fixedUpdateTimer.start()
 
     val updateListener = ActionListener {
         Update()

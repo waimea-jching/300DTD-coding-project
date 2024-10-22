@@ -14,24 +14,41 @@ import javax.swing.SwingConstants
 //=============================================================================================
 
 
-class Player(val gameDisplay: Display): JLabel("*", SwingConstants.CENTER), KeyEventDispatcher {
-    private val flatLafFont = FlatLaf.getPreferredFontFamily()
-    private val bigFont = Font(flatLafFont, Font.PLAIN, 40)
-
+class Player(val gameDisplay: Display): JLabel(), KeyEventDispatcher {
     private var verticalInput : Int = 0
     private var horizontalInput : Int = 0
 
     private val moveSpeed : Int = 10
 
-    private lateinit var playerCollider : Collider
+    private val playerCollider : Collider
+    private val playerAnimator : Animator
+    private lateinit var idleAnimation : Animation
 
     private var isColliding : Boolean = false
 
     init {
-        font = bigFont
         bounds = Rectangle(380,280,40,40)
+
         playerCollider = Collider(bounds, gameDisplay)
+        playerAnimator = Animator()
+        SetUpAnimations()
+
+
         gameDisplay.add(this)
+    }
+
+    private fun SetUpAnimations() {
+        val paths = mutableListOf<String>()
+        paths.addAll(listOf("src/images/chracter.png", "src/images/chractercopy.png"))
+        idleAnimation = Animation(paths)
+
+        playerAnimator.setAnimation(idleAnimation)
+        playerAnimator.setAnimationSpeed(2)
+        playerAnimator.playAnimation()
+    }
+
+    fun animatePlayer() {
+        icon = playerAnimator.getCurrentAnimationFrame()
     }
 
     fun movePlayer() {

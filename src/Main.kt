@@ -2,11 +2,7 @@
 
 
 import com.formdev.flatlaf.FlatDarkLaf
-import com.formdev.flatlaf.FlatLightLaf
 import java.awt.*
-import java.awt.event.*
-import java.io.Console
-import javax.swing.*
 
 
 //=============================================================================================
@@ -51,8 +47,9 @@ fun Update(){
     player.movePlayer()
 }
 
-fun PhysicsUpdate(){
+fun FixedUpdate(){
     player.playerCollisionCheck()
+    player.animatePlayer()
 }
 
 

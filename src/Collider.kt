@@ -22,6 +22,7 @@ class Collider(private val initialBounds : Rectangle, gameDisplay: Display){
         if (colliderBound.x <= 0) return true
         if (colliderBound.y <= 0) return true
         if ((colliderBound.x + colliderBound.width) >= displaySize.width)  return true
+        if ((colliderBound.y + colliderBound.height) >= displaySize.height)  return true
         else return false
     }
 

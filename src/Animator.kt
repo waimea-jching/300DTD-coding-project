@@ -19,7 +19,7 @@ class Animator() {
     private lateinit var animationTimer: Timer
     private var animationIndex: Int = 0
 
-    val animationListener : ActionListener = ActionListener {updateAnimation()}
+    private val animationListener : ActionListener = ActionListener {updateAnimation()}
 
     private fun updateAnimation() {
         if (animationIndex >= currentAnimation.images.count()) animationIndex = 0

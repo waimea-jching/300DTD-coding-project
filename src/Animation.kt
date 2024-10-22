@@ -8,9 +8,10 @@ import javax.swing.*
 
 //=============================================================================================
 
-class Animation(imagePaths : MutableList<String>) {
+class Animation(imagePaths : MutableList<String>, rectangleBounds: Rectangle) {
+    val bounds = rectangleBounds
     val images = mutableListOf<ImageIcon>()
-    private val paths : MutableList<String> = imagePaths
+    private val paths = imagePaths
 
     init {
         loadImages()
@@ -18,7 +19,8 @@ class Animation(imagePaths : MutableList<String>) {
 
     private fun loadImages() {
         for (path in paths) {
-            val image = ImageIcon(path).image
+            var image = ImageIcon(path).image
+            image = image.getScaledInstance(bounds.width, bounds.height, Image.SCALE_SMOOTH)
             val imageIcon = ImageIcon(image)
             images.add(imageIcon)
 

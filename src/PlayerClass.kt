@@ -1,14 +1,11 @@
 //=============================================================================================
 
 
-import com.formdev.flatlaf.FlatLaf
 import java.awt.Dimension
-import java.awt.Font
 import java.awt.KeyEventDispatcher
 import java.awt.Rectangle
 import java.awt.event.KeyEvent
 import javax.swing.JLabel
-import javax.swing.SwingConstants
 
 
 //=============================================================================================
@@ -23,6 +20,7 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
     private val playerCollider : Collider
     private val playerAnimator : Animator
     private lateinit var idleAnimation : Animation
+    private lateinit var testAnimation : Animation
 
     private var isColliding : Boolean = false
 
@@ -31,16 +29,21 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
 
         playerCollider = Collider(bounds, gameDisplay)
         playerAnimator = Animator()
-        SetUpAnimations()
+        setUpAnimations()
 
 
         gameDisplay.add(this)
     }
 
-    private fun SetUpAnimations() {
+    private fun setUpAnimations() {
         val paths = mutableListOf<String>()
+
         paths.addAll(listOf("src/images/chracter.png", "src/images/chractercopy.png"))
-        idleAnimation = Animation(paths)
+        idleAnimation = Animation(paths, bounds)
+
+        paths.clear()
+        paths.addAll(listOf("src/images/test.png", "src/images/test2.jpg", "src/images/test3.jpg"))
+        testAnimation = Animation(paths, bounds)
 
         playerAnimator.setAnimation(idleAnimation)
         playerAnimator.setAnimationSpeed(2)
@@ -84,16 +87,17 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
                 KeyEvent.VK_A -> horizontalInput = -1
                 KeyEvent.VK_S -> verticalInput = 1
                 KeyEvent.VK_D -> horizontalInput = 1
+                KeyEvent.VK_V -> playerAnimator.setAnimation(testAnimation)
             }
         }
         //was it a release event
         if(e?.id == KeyEvent.KEY_RELEASED) {
             // Take action
             when (e.keyCode) {
-                KeyEvent.VK_W -> verticalInput = 0
-                KeyEvent.VK_A -> horizontalInput = 0
-                KeyEvent.VK_S -> verticalInput = -0
-                KeyEvent.VK_D -> horizontalInput = 0
+                KeyEvent.VK_W -> if (verticalInput != 1)verticalInput = 0
+                KeyEvent.VK_A -> if (horizontalInput != 1) horizontalInput = 0
+                KeyEvent.VK_S -> if (verticalInput != -1)verticalInput = 0
+                KeyEvent.VK_D -> if (horizontalInput != -1) horizontalInput = 0
             }
         }
         // Allow the event to be redispatched

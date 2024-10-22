@@ -1,39 +1,42 @@
+//=============================================================================================
+
+
 import com.formdev.flatlaf.FlatLaf
-import jdk.incubator.vector.Vector
-import java.awt.Color
 import java.awt.Dimension
 import java.awt.Font
 import java.awt.KeyEventDispatcher
 import java.awt.Rectangle
-import java.awt.event.ActionEvent
-import java.awt.event.ActionListener
 import java.awt.event.KeyEvent
 import javax.swing.JLabel
 import javax.swing.SwingConstants
 
-class Player(val currentDisplay: Display): JLabel("*", SwingConstants.CENTER), KeyEventDispatcher {
-    val flatLafFont = FlatLaf.getPreferredFontFamily()
-    val bigFont = Font(flatLafFont, Font.PLAIN, 40)
 
-    var verticalInput : Int = 0
-    var horizontalInput : Int = 0
+//=============================================================================================
 
-    val moveSpeed : Int = 10
 
-    lateinit var playerCollider : Collider
+class Player(val gameDisplay: Display): JLabel("*", SwingConstants.CENTER), KeyEventDispatcher {
+    private val flatLafFont = FlatLaf.getPreferredFontFamily()
+    private val bigFont = Font(flatLafFont, Font.PLAIN, 40)
+
+    private var verticalInput : Int = 0
+    private var horizontalInput : Int = 0
+
+    private val moveSpeed : Int = 10
+
+    private lateinit var playerCollider : Collider
 
     private var isColliding : Boolean = false
 
     init {
         font = bigFont
         bounds = Rectangle(380,280,40,40)
-        playerCollider = Collider(bounds, currentDisplay)
-        currentDisplay.add(this)
+        playerCollider = Collider(bounds, gameDisplay)
+        gameDisplay.add(this)
     }
 
     fun movePlayer() {
         val currentPosition = bounds
-        var newPosition = currentPosition
+        val newPosition = currentPosition
 
         if (!isColliding) {
             newPosition.x += (horizontalInput * moveSpeed)
@@ -48,7 +51,7 @@ class Player(val currentDisplay: Display): JLabel("*", SwingConstants.CENTER), K
         }
 
         playerCollider.updateCollider(newPosition)
-        currentDisplay.add(this)
+        gameDisplay.add(this)
     }
 
     fun playerCollisionCheck(){

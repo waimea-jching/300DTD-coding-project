@@ -9,24 +9,24 @@ import javax.swing.*
 //=============================================================================================
 
 
-//Variables
-private val frameRate : Int = 30 /*how many times per second*/
-private val physicsTick : Int = frameRate * 2/*how many times per second*/
+//Timer Speeds
+private val frameRate : Int = 30 /*ticks per second*/
+private val physicsTick : Int = frameRate * 2/*ticks per second*/
 
-//Timers
+//Timer Variables
 private lateinit var updateTimer: Timer
 private lateinit var physicsTimer: Timer
 
 fun SetupTimers() {
-    val physics = ActionListener {
+    val physicsListener = ActionListener {
         PhysicsUpdate()
     }
-    physicsTimer = Timer((1000/ physicsTick), physics)
+    physicsTimer = Timer((1000/ physicsTick), physicsListener)
     physicsTimer.start()
 
-    val update = ActionListener {
+    val updateListener = ActionListener {
         Update()
     }
-    updateTimer = Timer((1000/ frameRate), update)
+    updateTimer = Timer((1000/ frameRate), updateListener)
     updateTimer.start()
 }

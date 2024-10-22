@@ -1,19 +1,27 @@
+//=============================================================================================
+
+
 import java.awt.Dimension
 import java.awt.Rectangle
 
-class Collider(private val initialBounds : Rectangle, currentDisplay: Display){
+
+//=============================================================================================
+
+
+class Collider(private val initialBounds : Rectangle, gameDisplay: Display){
     private var colliderBound : Rectangle = initialBounds
-    val displaySize : Dimension = currentDisplay.contentPane.preferredSize
+    private val displaySize : Dimension = gameDisplay.contentPane.preferredSize
 
     fun updateCollider(newBounds : Rectangle) {
         colliderBound = newBounds
     }
 
     fun isColliding() : Boolean{
+        //return colliderBound.contains(colliderBound)
+
         if (colliderBound.x <= 0) return true
         if (colliderBound.y <= 0) return true
         if ((colliderBound.x + colliderBound.width) >= displaySize.width)  return true
-        if ((colliderBound.y + colliderBound.height) >= displaySize.height)  return true
         else return false
     }
 

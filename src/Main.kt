@@ -35,13 +35,14 @@ fun main(){
 }
 
 fun Awake(){
-    // Flat, Dark look-and-feel
+    // Flat, Dark look
     FlatDarkLaf.setup()
 
     // Create the display
-    SetupDisplay()
+    display = Display("Tomb Run", Dimension(800, 600))
     SetupTimers()
 
+    //Instantiate Player & Allow to Read Input
     player = Player(display)
     KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(player)
 }

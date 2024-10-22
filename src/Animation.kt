@@ -21,6 +21,11 @@ class Animation(imagePaths : MutableList<String>) {
             val image = ImageIcon(path).image
             val imageIcon = ImageIcon(image)
             images.add(imageIcon)
+
+
+//            var dogImage = ImageIcon("src/images/dog.jpeg").image
+//            dogImage = dogImage.getScaledInstance(200, 200, Image.SCALE_SMOOTH)
+//            dogImageIcon = ImageIcon(dogImage)
         }
     }
 }

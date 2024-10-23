@@ -15,12 +15,11 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
     private var verticalInput : Int = 0
     private var horizontalInput : Int = 0
 
-    private val moveSpeed : Int = 10
+    private val moveSpeed : Int = 5
 
     private val playerCollider : Collider
     private val playerAnimator : Animator
     private lateinit var idleAnimation : Animation
-    private lateinit var testAnimation : Animation
 
     private var isColliding : Boolean = false
 
@@ -40,10 +39,6 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
 
         paths.addAll(listOf("src/images/chracter.png", "src/images/chractercopy.png"))
         idleAnimation = Animation(paths, bounds)
-
-        paths.clear()
-        paths.addAll(listOf("src/images/test.png", "src/images/test2.jpg", "src/images/test3.jpg"))
-        testAnimation = Animation(paths, bounds)
 
         playerAnimator.setAnimation(idleAnimation)
         playerAnimator.setAnimationSpeed(2)
@@ -87,7 +82,6 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
                 KeyEvent.VK_A -> horizontalInput = -1
                 KeyEvent.VK_S -> verticalInput = 1
                 KeyEvent.VK_D -> horizontalInput = 1
-                KeyEvent.VK_V -> playerAnimator.setAnimation(testAnimation)
             }
         }
         //was it a release event

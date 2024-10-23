@@ -35,7 +35,7 @@ fun Awake(){
     FlatDarkLaf.setup()
 
     // Create the display
-    display = Display("Tomb Run", Dimension(800, 600))
+    display = Display("Dungeon Knight", Dimension(800, 600))
 
     //Instantiate Player & Allow to Read Input
     player = Player(display)

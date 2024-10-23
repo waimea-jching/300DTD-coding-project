@@ -12,24 +12,29 @@ import javax.swing.JLabel
 
 
 class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
-    private var verticalInput : Int = 0
-    private var horizontalInput : Int = 0
-
-    private val moveSpeed : Int = 5
-
+    //components
     private val playerCollider : Collider
     private val playerAnimator : Animator
+
+    //movement
+    private var verticalInput : Int = 0
+    private var horizontalInput : Int = 0
+    private val moveSpeed : Int = 3
+
+    //animation
     private lateinit var idleAnimation : Animation
 
+    //physics
     private var isColliding : Boolean = false
 
     init {
-        bounds = Rectangle(380,280,40,40)
+        //set starting position and size of player here
+        bounds = Rectangle(380,280,80,80)
 
+        //setup components & animations
         playerCollider = Collider(bounds, gameDisplay)
         playerAnimator = Animator()
         setUpAnimations()
-
 
         gameDisplay.add(this)
     }
@@ -37,34 +42,44 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
     private fun setUpAnimations() {
         val paths = mutableListOf<String>()
 
-        paths.addAll(listOf("src/images/chracter.png", "src/images/chractercopy.png"))
-        idleAnimation = Animation(paths, bounds)
+        paths.addAll(listOf("src/images/knight.png"))
+        idleAnimation = Animation(paths, 2, bounds)
 
         playerAnimator.setAnimation(idleAnimation)
-        playerAnimator.setAnimationSpeed(2)
         playerAnimator.playAnimation()
     }
 
     fun animatePlayer() {
-        icon = playerAnimator.getCurrentAnimationFrame()
+        icon = playerAnimator.getCurrentFrame()
     }
 
     fun movePlayer() {
-        val currentPosition = bounds
-        val newPosition = currentPosition
+        val newPosition = bounds
+        val calculatedMoveSpeed : Int
+
+        //check if player is moving diagonally and normalise
+        // the speed based on the input vector
+        if (horizontalInput != 0 && verticalInput != 0) {
+            calculatedMoveSpeed = (moveSpeed.toFloat() / 1.4142f).toInt()
+        }
+        else calculatedMoveSpeed = moveSpeed
 
         if (!isColliding) {
-            newPosition.x += (horizontalInput * moveSpeed)
-            newPosition.y += (verticalInput * moveSpeed)
+            newPosition.x += (horizontalInput * calculatedMoveSpeed)
+            newPosition.y += (verticalInput * calculatedMoveSpeed)
             bounds = newPosition
         }
         else {
+            //if colliding we stop the player from
+            // moving in the direction of the collision
             val collisionDirection : Dimension = playerCollider.getCollisionDirection()
-            if (collisionDirection.width != horizontalInput) newPosition.x += ((horizontalInput * moveSpeed))
-            if (collisionDirection.height != verticalInput) newPosition.y += ((verticalInput * moveSpeed))
+            if (collisionDirection.width != horizontalInput) newPosition.x += (horizontalInput * calculatedMoveSpeed)
+            if (collisionDirection.height != verticalInput) newPosition.y += (verticalInput * calculatedMoveSpeed)
             bounds = newPosition
         }
 
+        //update player collider & add new positioned
+        // player to game display
         playerCollider.updateCollider(newPosition)
         gameDisplay.add(this)
     }
@@ -76,7 +91,6 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
     override fun dispatchKeyEvent(e: KeyEvent?): Boolean {
         // Was it a key press event
         if(e?.id == KeyEvent.KEY_PRESSED) {
-            // Take action
             when (e.keyCode) {
                 KeyEvent.VK_W -> verticalInput = -1
                 KeyEvent.VK_A -> horizontalInput = -1
@@ -86,15 +100,15 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
         }
         //was it a release event
         if(e?.id == KeyEvent.KEY_RELEASED) {
-            // Take action
             when (e.keyCode) {
+                //checking if the player is moving before
+                // culling input on key release
                 KeyEvent.VK_W -> if (verticalInput != 1)verticalInput = 0
                 KeyEvent.VK_A -> if (horizontalInput != 1) horizontalInput = 0
                 KeyEvent.VK_S -> if (verticalInput != -1)verticalInput = 0
                 KeyEvent.VK_D -> if (horizontalInput != -1) horizontalInput = 0
             }
         }
-        // Allow the event to be redispatched
         return false
     }
 }

@@ -1,10 +1,7 @@
 //=============================================================================================
 
 
-import com.formdev.flatlaf.FlatDarkLaf
-import com.formdev.flatlaf.FlatLightLaf
 import java.awt.*
-import java.awt.event.*
 import javax.swing.*
 
 
@@ -12,13 +9,14 @@ import javax.swing.*
 
 
 class Display(displayName: String, displaySize: Dimension) : JFrame(){
+    //initializing
     private val name = displayName
     private val size = displaySize
 
     init {
         setupWindow()
 
-        // Show the app, centred on screen
+        // Show the display, centred on screen
         setLocationRelativeTo(null)
         isVisible = true
     }

@@ -10,9 +10,9 @@ import javax.swing.Timer
 
 //Timer Speeds
 private val frameRate : Int = 60 /*ticks per second*/
-private val fixedUpdateTick : Int = 40/*ticks per second*/
+private val fixedUpdateTick : Int = frameRate * 2/*ticks per second*/
 
-//Timer Variables
+//Timers
 private lateinit var updateTimer: Timer
 private lateinit var fixedUpdateTimer: Timer
 
@@ -28,4 +28,9 @@ fun SetupTimers() {
     }
     updateTimer = Timer((1000/ frameRate), updateListener)
     updateTimer.start()
+}
+
+fun stopTimers() {
+    updateTimer.stop()
+    fixedUpdateTimer.stop()
 }

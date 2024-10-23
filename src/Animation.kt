@@ -2,16 +2,19 @@
 
 
 import java.awt.*
-import java.awt.event.*
 import javax.swing.*
 
 
 //=============================================================================================
 
-class Animation(imagePaths : MutableList<String>, rectangleBounds: Rectangle) {
-    val bounds = rectangleBounds
-    val images = mutableListOf<ImageIcon>()
+class Animation(imagePaths : MutableList<String>, speed : Int, rectangleBounds: Rectangle) {
+    //initializing
+    private val bounds = rectangleBounds
     private val paths = imagePaths
+    val animationSpeed = speed
+
+    //frames list
+    val frames = mutableListOf<ImageIcon>()
 
     init {
         loadImages()
@@ -19,15 +22,12 @@ class Animation(imagePaths : MutableList<String>, rectangleBounds: Rectangle) {
 
     private fun loadImages() {
         for (path in paths) {
+            //grab image from package
             var image = ImageIcon(path).image
+            //scale image
             image = image.getScaledInstance(bounds.width, bounds.height, Image.SCALE_SMOOTH)
             val imageIcon = ImageIcon(image)
-            images.add(imageIcon)
-
-
-//            var dogImage = ImageIcon("src/images/dog.jpeg").image
-//            dogImage = dogImage.getScaledInstance(200, 200, Image.SCALE_SMOOTH)
-//            dogImageIcon = ImageIcon(dogImage)
+            frames.add(imageIcon)
         }
     }
 }

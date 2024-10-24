@@ -6,6 +6,7 @@ import java.awt.KeyEventDispatcher
 import java.awt.Rectangle
 import java.awt.event.KeyEvent
 import javax.swing.JLabel
+import kotlin.math.*
 
 
 //=============================================================================================
@@ -35,15 +36,15 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
         playerCollider = Collider(bounds, gameDisplay)
         playerAnimator = Animator()
         setUpAnimations()
-
-        gameDisplay.add(this)
     }
 
     private fun setUpAnimations() {
         val paths = mutableListOf<String>()
 
-        paths.addAll(listOf("src/images/knight.png"))
-        idleAnimation = Animation(paths, 2, bounds)
+        paths.addAll(listOf("src/images/frame_0_delay-0.05s.png", "src/images/frame_1_delay-0.05s.png", "src/images/frame_2_delay-0.05s.png",
+                            "src/images/frame_3_delay-0.05s.png", "src/images/frame_4_delay-0.05s.png", "src/images/frame_5_delay-0.05s.png",
+                            "src/images/frame_6_delay-0.05s.png", "src/images/frame_7_delay-0.05s.png"))
+        idleAnimation = Animation(paths, 15, bounds)
 
         playerAnimator.setAnimation(idleAnimation)
         playerAnimator.playAnimation()
@@ -60,7 +61,8 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
         //check if player is moving diagonally and normalise
         // the speed based on the input vector
         if (horizontalInput != 0 && verticalInput != 0) {
-            calculatedMoveSpeed = (moveSpeed.toFloat() / 1.4142f).toInt()
+            val inputVector = sqrt((horizontalInput.toFloat() * horizontalInput.toFloat()) + (verticalInput.toFloat() * verticalInput.toFloat()))
+            calculatedMoveSpeed = (moveSpeed.toFloat() / inputVector).toInt()
         }
         else calculatedMoveSpeed = moveSpeed
 
@@ -73,15 +75,14 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
             //if colliding we stop the player from
             // moving in the direction of the collision
             val collisionDirection : Dimension = playerCollider.getCollisionDirection()
-            if (collisionDirection.width != horizontalInput) newPosition.x += (horizontalInput * calculatedMoveSpeed)
-            if (collisionDirection.height != verticalInput) newPosition.y += (verticalInput * calculatedMoveSpeed)
+            if (collisionDirection.width != horizontalInput) newPosition.x += (horizontalInput * moveSpeed)
+            if (collisionDirection.height != verticalInput) newPosition.y += (verticalInput * moveSpeed)
             bounds = newPosition
         }
 
         //update player collider & add new positioned
         // player to game display
         playerCollider.updateCollider(newPosition)
-        gameDisplay.add(this)
     }
 
     fun playerCollisionCheck(){

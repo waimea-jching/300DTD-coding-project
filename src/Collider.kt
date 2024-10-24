@@ -8,10 +8,17 @@ import java.awt.Rectangle
 //=============================================================================================
 
 
-class Collider(private val initialBounds : Rectangle, gameDisplay: Display){
+class Collider(private var colliderBound : Rectangle, private val gameDisplay: Display){
     //initializing
-    private var colliderBound : Rectangle = initialBounds
     private val displaySize : Dimension = gameDisplay.contentPane.preferredSize
+
+    companion object {
+        val globalColliders = mutableListOf<Collider>()
+    }
+
+    init {
+        globalColliders.add(this)
+    }
 
     fun updateCollider(newBounds : Rectangle) {
         colliderBound = newBounds

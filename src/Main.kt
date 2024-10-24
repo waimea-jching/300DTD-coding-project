@@ -3,6 +3,8 @@
 
 import com.formdev.flatlaf.FlatDarkLaf
 import java.awt.*
+import javax.swing.ImageIcon
+import javax.swing.JLabel
 
 
 //=============================================================================================
@@ -21,9 +23,11 @@ import java.awt.*
  * ------------------------------------------------------------------------
  */
 
+//Displays
+lateinit var gameDisplay : Display
+lateinit var background : JLabel
 
-//Display Object
-lateinit var display : Display
+//Player Instance
 lateinit var player : Player
 
 fun main(){
@@ -31,14 +35,26 @@ fun main(){
 }
 
 fun Awake(){
-    // Flat, Dark look
+    //Flat, Dark look
     FlatDarkLaf.setup()
 
-    // Create the display
-    display = Display("Dungeon Knight", Dimension(800, 600))
+    //Load background Icon
+    var backgroundImage = ImageIcon("src/images/gridBackground.png").image
+    backgroundImage = backgroundImage.getScaledInstance(800, 600, Image.SCALE_SMOOTH)
+    val backgroundIcon = ImageIcon(backgroundImage)
+
+    //Create displays
+    gameDisplay = Display("Dungeon Knight", Dimension(800, 600))
+
+    //Create Background
+    background = JLabel()
+    background.bounds = Rectangle(0, 0, 800, 600)
+    background.icon = backgroundIcon
+    gameDisplay.add(background)
 
     //Instantiate Player & Allow to Read Input
-    player = Player(display)
+    player = Player(gameDisplay)
+    background.add(player)
     KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(player)
 
     //Start Timers

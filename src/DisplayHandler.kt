@@ -8,11 +8,7 @@ import javax.swing.*
 //=============================================================================================
 
 
-class Display(displayName: String, displaySize: Dimension) : JFrame(){
-    //initializing
-    private val name = displayName
-    private val size = displaySize
-
+class Display(private val displayName: String, private val displaySize: Dimension) : JFrame(){
     init {
         setupWindow()
 
@@ -22,8 +18,8 @@ class Display(displayName: String, displaySize: Dimension) : JFrame(){
     }
 
     private fun setupWindow() {
-        title = name
-        contentPane.preferredSize = size
+        title = displayName
+        contentPane.preferredSize = displaySize
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
         isResizable = false
         layout = null

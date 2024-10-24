@@ -7,12 +7,7 @@ import javax.swing.*
 
 //=============================================================================================
 
-class Animation(imagePaths : MutableList<String>, speed : Int, rectangleBounds: Rectangle) {
-    //initializing
-    private val bounds = rectangleBounds
-    private val paths = imagePaths
-    val animationSpeed = speed
-
+class Animation(private val imagePaths : MutableList<String>, val animationSpeed : Int, private val bounds: Rectangle) {
     //frames list
     val frames = mutableListOf<ImageIcon>()
 
@@ -21,7 +16,7 @@ class Animation(imagePaths : MutableList<String>, speed : Int, rectangleBounds: 
     }
 
     private fun loadImages() {
-        for (path in paths) {
+        for (path in imagePaths) {
             //grab image from package
             var image = ImageIcon(path).image
             //scale image

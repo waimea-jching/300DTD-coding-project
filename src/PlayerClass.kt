@@ -30,7 +30,7 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
 
     init {
         //set starting position and size of player here
-        bounds = Rectangle(380,280,80,80)
+        bounds = Rectangle(380,280,120,120)
 
         //setup components & animations
         playerCollider = Collider(bounds, gameDisplay)

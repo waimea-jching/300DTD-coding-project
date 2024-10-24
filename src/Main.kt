@@ -58,16 +58,16 @@ fun Awake(){
     KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(player)
 
     //Start Timers
-    SetupTimers()
+    setupTimers()
 }
 
 fun Update(){
     player.movePlayer()
+    player.animatePlayer()
 }
 
 fun FixedUpdate(){
     player.playerCollisionCheck()
-    player.animatePlayer()
 }
 
 

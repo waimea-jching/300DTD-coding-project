@@ -12,10 +12,10 @@ import javax.swing.JLabel
 
 /**
  * ------------------------------------------------------------------------
- * PROJECT NAME HERE
+ * Dungeon Knight
  * Level 3 programming project
  *
- * by YOUR NAME HERE
+ * by Josiah Ching
  *
  * BRIEF PROJECT DESCRIPTION HERE
  * BRIEF PROJECT DESCRIPTION HERE
@@ -31,10 +31,10 @@ lateinit var background : JLabel
 lateinit var player : Player
 
 fun main(){
-    Awake()
+    awake()
 }
 
-fun Awake(){
+fun awake(){
     //Flat, Dark look
     FlatDarkLaf.setup()
 
@@ -61,7 +61,7 @@ fun Awake(){
     setupTimers()
 }
 
-fun Update(){
+fun update(){
     player.playerCollisionCheck()
     player.animatePlayer()
     player.movePlayer()

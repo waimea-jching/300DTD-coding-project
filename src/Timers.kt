@@ -16,7 +16,7 @@ private lateinit var updateTimer: Timer
 
 fun setupTimers() {
     val updateListener = ActionListener {
-        Update()
+        update()
     }
     updateTimer = Timer((1000/ frameRate), updateListener)
     updateTimer.start()

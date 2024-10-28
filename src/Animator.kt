@@ -61,6 +61,7 @@ class Animator() {
         animationTimer.removeActionListener(animationListener)
 
         animationTimer = Timer((1000/ animationSpeed), animationListener)
+        updateAnimation()
         animationTimer.start()
     }
 

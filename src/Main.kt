@@ -62,12 +62,9 @@ fun Awake(){
 }
 
 fun Update(){
-    player.movePlayer()
-    player.animatePlayer()
-}
-
-fun FixedUpdate(){
     player.playerCollisionCheck()
+    player.animatePlayer()
+    player.movePlayer()
 }
 
 

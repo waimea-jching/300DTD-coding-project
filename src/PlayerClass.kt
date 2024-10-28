@@ -24,13 +24,16 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
 
     //animation
     private lateinit var idleAnimation : Animation
+    private lateinit var runAnimation : Animation
+    private lateinit var idleLAnimation : Animation
+    private lateinit var runLAnimation : Animation
 
     //physics
     private var isColliding : Boolean = false
 
     init {
         //set starting position and size of player here
-        bounds = Rectangle(380,280,120,120)
+        bounds = Rectangle(380,280,54,66)
 
         //setup components & animations
         playerCollider = Collider(bounds, gameDisplay)
@@ -41,16 +44,82 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
     private fun setUpAnimations() {
         val paths = mutableListOf<String>()
 
-        paths.addAll(listOf("src/images/frame_0_delay-0.05s.png", "src/images/frame_1_delay-0.05s.png", "src/images/frame_2_delay-0.05s.png",
-                            "src/images/frame_3_delay-0.05s.png", "src/images/frame_4_delay-0.05s.png", "src/images/frame_5_delay-0.05s.png",
-                            "src/images/frame_6_delay-0.05s.png", "src/images/frame_7_delay-0.05s.png"))
-        idleAnimation = Animation(paths, 15, bounds)
+        paths.addAll(listOf("src/Animations/Player_Idle/frame_0.png", "src/Animations/Player_Idle/frame_1.png",
+                            "src/Animations/Player_Idle/frame_2.png", "src/Animations/Player_Idle/frame_3.png",
+                            "src/Animations/Player_Idle/frame_4.png", "src/Animations/Player_Idle/frame_5.png",
+                            "src/Animations/Player_Idle/frame_6.png", "src/Animations/Player_Idle/frame_7.png",))
+        idleAnimation = Animation(paths, 5, bounds)
+
+        paths.clear()
+        paths.addAll(listOf("src/Animations/Player_Idle_Left/frame_0.png", "src/Animations/Player_Idle_Left/frame_1.png",
+                            "src/Animations/Player_Idle_Left/frame_2.png", "src/Animations/Player_Idle_Left/frame_3.png",
+                            "src/Animations/Player_Idle_Left/frame_4.png", "src/Animations/Player_Idle_Left/frame_5.png",
+                            "src/Animations/Player_Idle_Left/frame_6.png", "src/Animations/Player_Idle_Left/frame_7.png",))
+        idleLAnimation = Animation(paths, 5, bounds)
+
+        paths.clear()
+        paths.addAll(listOf("src/Animations/Player_Run/frame_0.png", "src/Animations/Player_Run/frame_1.png",
+                            "src/Animations/Player_Run/frame_2.png", "src/Animations/Player_Run/frame_3.png",
+                            "src/Animations/Player_Run/frame_4.png", "src/Animations/Player_Run/frame_5.png",
+                            "src/Animations/Player_Run/frame_6.png", "src/Animations/Player_Run/frame_7.png",))
+        runAnimation = Animation(paths, 5, bounds)
+
+        paths.clear()
+        paths.addAll(listOf("src/Animations/Player_Run_Left/frame_0.png", "src/Animations/Player_Run_Left/frame_1.png",
+                            "src/Animations/Player_Run_Left/frame_2.png", "src/Animations/Player_Run_Left/frame_3.png",
+                            "src/Animations/Player_Run_Left/frame_4.png", "src/Animations/Player_Run_Left/frame_5.png",
+                            "src/Animations/Player_Run_Left/frame_6.png", "src/Animations/Player_Run_Left/frame_7.png",))
+        runLAnimation = Animation(paths, 5, bounds)
 
         playerAnimator.setAnimation(idleAnimation)
+        playerAnimator.loop = true
         playerAnimator.playAnimation()
     }
 
     fun animatePlayer() {
+        if (verticalInput != 0 || horizontalInput != 0){
+            if (horizontalInput == 1){
+                if (playerAnimator.getCurrentAnimation() != runAnimation) {
+                    playerAnimator.setAnimation(runAnimation)
+                    playerAnimator.playAnimation()
+                }
+            }
+            else if (horizontalInput == -1){
+                if (playerAnimator.getCurrentAnimation() != runLAnimation) {
+                    playerAnimator.setAnimation(runLAnimation)
+                    playerAnimator.playAnimation()
+                }
+            }
+            else {
+                if (playerAnimator.getCurrentAnimation() == idleLAnimation || playerAnimator.getCurrentAnimation() == runLAnimation) {
+                    if (playerAnimator.getCurrentAnimation() != runLAnimation) {
+                        playerAnimator.setAnimation(runLAnimation)
+                        playerAnimator.playAnimation()
+                    }
+                }
+                else {
+                    if (playerAnimator.getCurrentAnimation() != runAnimation) {
+                        playerAnimator.setAnimation(runAnimation)
+                        playerAnimator.playAnimation()
+                    }
+                }
+            }
+        }
+        else {
+            if (playerAnimator.getCurrentAnimation() == runAnimation){
+                if (playerAnimator.getCurrentAnimation() != idleAnimation) {
+                    playerAnimator.setAnimation(idleAnimation)
+                    playerAnimator.playAnimation()
+                }
+            }
+            else if (playerAnimator.getCurrentAnimation() == runLAnimation){
+                if (playerAnimator.getCurrentAnimation() != idleLAnimation) {
+                    playerAnimator.setAnimation(idleLAnimation)
+                    playerAnimator.playAnimation()
+                }
+            }
+        }
+
         icon = playerAnimator.getCurrentFrame()
     }
 

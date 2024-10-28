@@ -22,6 +22,10 @@ class Animator() {
     private lateinit var animationTimer: Timer
     private val animationListener : ActionListener = ActionListener {updateAnimation()}
 
+    init {
+        animationTimer = Timer(0, animationListener)
+    }
+
     private fun updateAnimation() {
         //playing through selected animations frames either
         // in a loop or just once
@@ -44,10 +48,17 @@ class Animator() {
         animationSpeed = animation.animationSpeed
     }
 
+    fun getCurrentAnimation() : Animation {
+        return currentAnimation
+    }
+
     fun playAnimation() {
         //if looping turned off make sure to start at beginning frame
         // in case animation index is set to something else
         if (!loop) animationIndex = 0
+
+        if (animationTimer.isRunning) stopAnimation()
+        animationTimer.removeActionListener(animationListener)
 
         animationTimer = Timer((1000/ animationSpeed), animationListener)
         animationTimer.start()

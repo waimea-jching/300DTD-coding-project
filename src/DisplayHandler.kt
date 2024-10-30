@@ -8,7 +8,7 @@ import javax.swing.*
 //=============================================================================================
 
 
-class Display(private val displayName: String, private val displaySize: Dimension) : JFrame(){
+class Display(private val displayName: String, private val displaySize: Dimension, val displayBoundary : Dimension) : JFrame(){
     init {
         setupWindow()
 

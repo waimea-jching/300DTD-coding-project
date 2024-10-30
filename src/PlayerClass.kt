@@ -156,6 +156,7 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
 
     fun playerCollisionCheck(){
         isColliding = playerCollider.isColliding()
+        println(isColliding)
     }
 
     override fun dispatchKeyEvent(e: KeyEvent?): Boolean {

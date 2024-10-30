@@ -2,9 +2,12 @@
 
 
 import com.formdev.flatlaf.FlatDarkLaf
+import com.formdev.flatlaf.FlatLaf
 import java.awt.*
 import javax.swing.ImageIcon
+import javax.swing.JButton
 import javax.swing.JLabel
+import javax.swing.SwingConstants
 
 
 //=============================================================================================
@@ -27,6 +30,8 @@ import javax.swing.JLabel
 lateinit var gameDisplay : Display
 lateinit var background : JLabel
 
+lateinit var testObject: JButton
+
 //Player Instance
 lateinit var player : Player
 
@@ -44,13 +49,17 @@ fun awake(){
     val backgroundIcon = ImageIcon(backgroundImage)
 
     //Create displays
-    gameDisplay = Display("Dungeon Knight", Dimension(800, 600))
+    gameDisplay = Display("Dungeon Knight", Dimension(800, 600), Dimension(800,600))
 
     //Create Background
     background = JLabel()
     background.bounds = Rectangle(0, 0, 800, 600)
     background.icon = backgroundIcon
     gameDisplay.add(background)
+
+    //Collision Testing
+    testObject = TestObject(gameDisplay)
+    background.add(testObject)
 
     //Instantiate Player & Allow to Read Input
     player = Player(gameDisplay)
@@ -65,6 +74,20 @@ fun update(){
     player.playerCollisionCheck()
     player.animatePlayer()
     player.movePlayer()
+}
+
+class TestObject(private val gameDisplay : Display): JButton("+") {
+    private val objectCollider : Collider
+
+    val flatLafFont = FlatLaf.getPreferredFontFamily()
+    val bigFont = Font(flatLafFont, Font.PLAIN, 40)
+
+    init {
+        bounds = Rectangle(400, 120, 80, 80)
+        font = bigFont
+
+        objectCollider = Collider(bounds, gameDisplay)
+    }
 }
 
 

@@ -8,9 +8,9 @@ import java.awt.Rectangle
 //=============================================================================================
 
 
-class Collider(private var colliderBound : Rectangle, private val gameDisplay: Display){
-    //initializing
-    private val displaySize : Dimension = gameDisplay.contentPane.preferredSize
+class Collider(private var bounds : Rectangle, private val gameDisplay: Display){
+
+    private val displayBoundary : Dimension = gameDisplay.displayBoundary
 
     companion object {
         val globalColliders = mutableListOf<Collider>()
@@ -21,29 +21,36 @@ class Collider(private var colliderBound : Rectangle, private val gameDisplay: D
     }
 
     fun updateCollider(newBounds : Rectangle) {
-        colliderBound = newBounds
+        bounds = newBounds
     }
 
     fun isColliding() : Boolean{
-        //return colliderBound.contains(colliderBound)
+        var isColliding = false
 
-        //Checking if parent is touching or
-        // beyond boundaries
-        if (colliderBound.x <= 0) return true
-        if (colliderBound.y <= 0) return true
-        if ((colliderBound.x + colliderBound.width) >= displaySize.width)  return true
-        if ((colliderBound.y + colliderBound.height) >= displaySize.height)  return true
+        for (collider in globalColliders){
+            if (collider != this){
+                isColliding = bounds.intersects(collider.bounds)
+            }
+        }
 
-        return false
+        //Checking if object is touching or
+        // beyond display boundaries
+        if (bounds.x <= 0) isColliding = true
+        if (bounds.y <= 0) isColliding = true
+        if ((bounds.x + bounds.width) >= displayBoundary.width)  isColliding = true
+        if ((bounds.y + bounds.height) >= displayBoundary.height)  isColliding = true
+
+        return isColliding
     }
 
     fun getCollisionDirection() : Dimension{
         var collisionDirection = Dimension(0, 0)
 
-        if (colliderBound.x <= 0) collisionDirection = Dimension(-1,collisionDirection.height)
-        if (colliderBound.y <= 0) collisionDirection = Dimension(collisionDirection.width, -1)
-        if ((colliderBound.x + colliderBound.width) >= displaySize.width) collisionDirection = Dimension(1,collisionDirection.height)
-        if ((colliderBound.y + colliderBound.height) >= displaySize.height) collisionDirection = Dimension(collisionDirection.width, 1)
+        //collision direction against display boundaries
+        if (bounds.x <= 0) collisionDirection = Dimension(-1,collisionDirection.height)
+        if (bounds.y <= 0) collisionDirection = Dimension(collisionDirection.width, -1)
+        if ((bounds.x + bounds.width) >= displayBoundary.width) collisionDirection = Dimension(1,collisionDirection.height)
+        if ((bounds.y + bounds.height) >= displayBoundary.height) collisionDirection = Dimension(collisionDirection.width, 1)
 
         return collisionDirection
     }

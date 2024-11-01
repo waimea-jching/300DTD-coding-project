@@ -35,7 +35,9 @@ class Animator() {
             animationIndex++
         }
         else {
-            if (animationIndex >= currentAnimation.frames.count()) stopAnimation()
+            if (animationIndex == currentAnimation.frames.count()-1) stopAnimation()
+            currentAnimationFrame = currentAnimation.frames[animationIndex]
+            animationIndex++
         }
     }
 

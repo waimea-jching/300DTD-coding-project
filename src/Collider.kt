@@ -3,6 +3,7 @@
 
 import java.awt.Dimension
 import java.awt.Rectangle
+import kotlin.math.abs
 
 
 //=============================================================================================
@@ -11,7 +12,7 @@ import java.awt.Rectangle
 class Collider(private var bounds : Rectangle, private val gameDisplay: Display){
 
     private val displayBoundary : Dimension = gameDisplay.displayBoundary
-    private lateinit var collisionReport : Collision
+    private var collisionBodys = mutableListOf<Rectangle>()
 
     companion object {
         val globalColliders = mutableListOf<Collider>()
@@ -23,17 +24,25 @@ class Collider(private var bounds : Rectangle, private val gameDisplay: Display)
 
     fun updateCollider(newBounds : Rectangle) {
         bounds = newBounds
+
     }
 
     fun isColliding() : Boolean{
         var isColliding = false
 
+        val padding = 10
+        val sensitivePadding = 13
+        val paddedBounds = Rectangle(bounds.x - padding, bounds.y - padding, bounds.width + sensitivePadding, bounds.height + sensitivePadding)
+
         for (collider in globalColliders){
             if (collider != this){
-                isColliding = bounds.intersects(collider.bounds)
-                if (isColliding) {
-                    collisionReport = Collision(this, collider)
+                if (paddedBounds.intersects(collider.bounds)) {
+                    isColliding = true
+                    if (!collisionBodys.contains(collider.bounds)) collisionBodys.add(collider.bounds)
                     break
+                }
+                else {
+                    if (collisionBodys.contains(collider.bounds)) collisionBodys.remove(collider.bounds)
                 }
             }
         }
@@ -50,10 +59,33 @@ class Collider(private var bounds : Rectangle, private val gameDisplay: Display)
     fun getCollisionDirection() : Dimension{
         var collisionDirection = Dimension(0, 0)
 
-        if (collisionReport != null){
-            
-        }
+        if (collisionBodys.isNotEmpty()){
+            for (collision in collisionBodys){
+                val padding = 14
 
+                //up
+                var shiftedBounds = Rectangle(bounds.x, bounds.y - padding, bounds.width, bounds.height)
+                if (shiftedBounds.intersects(collision.bounds)){
+                    collisionDirection = Dimension(collisionDirection.width, -1)
+                }
+                //down
+                shiftedBounds = Rectangle(bounds.x, bounds.y + padding, bounds.width, bounds.height)
+                if (shiftedBounds.intersects(collision.bounds)){
+                    collisionDirection = Dimension(collisionDirection.width, 1)
+                }
+                //left
+                shiftedBounds = Rectangle(bounds.x - padding, bounds.y, bounds.width, bounds.height)
+                if (shiftedBounds.intersects(collision.bounds)){
+                    collisionDirection = Dimension(-1,collisionDirection.height)
+                }
+                //right
+                shiftedBounds = Rectangle(bounds.x + padding, bounds.y, bounds.width, bounds.height)
+                if (shiftedBounds.intersects(collision.bounds)){
+                    collisionDirection = Dimension(1,collisionDirection.height)
+                }
+            }
+        }
+        
         //collision direction against display boundaries
         if (bounds.x <= 0) collisionDirection = Dimension(-1,collisionDirection.height)
         if (bounds.y <= 0) collisionDirection = Dimension(collisionDirection.width, -1)

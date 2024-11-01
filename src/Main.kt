@@ -8,6 +8,7 @@ import javax.swing.ImageIcon
 import javax.swing.JButton
 import javax.swing.JLabel
 import javax.swing.SwingConstants
+import kotlin.math.abs
 
 
 //=============================================================================================
@@ -31,6 +32,7 @@ lateinit var gameDisplay : Display
 lateinit var background : JLabel
 
 lateinit var testObject: JButton
+lateinit var testObject2: JButton
 
 //Player Instance
 lateinit var player : Player
@@ -58,8 +60,11 @@ fun awake(){
     gameDisplay.add(background)
 
     //Collision Testing
-    testObject = TestObject(gameDisplay)
+    testObject = TestObject(gameDisplay, Dimension(40, 40))
     background.add(testObject)
+
+    testObject2 = TestObject(gameDisplay, Dimension(600, 450))
+    background.add(testObject2)
 
     //Instantiate Player & Allow to Read Input
     player = Player(gameDisplay)
@@ -76,14 +81,14 @@ fun update(){
     player.movePlayer()
 }
 
-class TestObject(private val gameDisplay : Display): JButton("+") {
+class TestObject(private val gameDisplay : Display, private val spawn : Dimension): JButton("+") {
     private val objectCollider : Collider
 
     val flatLafFont = FlatLaf.getPreferredFontFamily()
     val bigFont = Font(flatLafFont, Font.PLAIN, 40)
 
     init {
-        bounds = Rectangle(400, 120, 80, 80)
+        bounds = Rectangle(spawn.width, spawn.height, 80, 80)
         font = bigFont
 
         objectCollider = Collider(bounds, gameDisplay)

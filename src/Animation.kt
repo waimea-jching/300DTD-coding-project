@@ -7,7 +7,7 @@ import javax.swing.*
 
 //=============================================================================================
 
-class Animation(private val imagePaths : MutableList<String>, val animationSpeed : Int, private val bounds: Rectangle) {
+class Animation(private val imagePaths : MutableList<String>, val animationSpeed : Int, private val bounds: Rectangle){
     //frames list
     val frames = mutableListOf<ImageIcon>()
 

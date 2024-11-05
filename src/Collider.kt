@@ -85,7 +85,7 @@ class Collider(private var bounds : Rectangle, private val gameDisplay: Display)
                 }
             }
         }
-        
+
         //collision direction against display boundaries
         if (bounds.x <= 0) collisionDirection = Dimension(-1,collisionDirection.height)
         if (bounds.y <= 0) collisionDirection = Dimension(collisionDirection.width, -1)

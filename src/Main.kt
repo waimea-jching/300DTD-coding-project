@@ -33,6 +33,7 @@ lateinit var background : JLabel
 
 lateinit var testObject: JButton
 lateinit var testObject2: JButton
+lateinit var testEnemy : Enemy
 
 //Player Instance
 lateinit var player : Player
@@ -60,16 +61,19 @@ fun awake(){
     gameDisplay.add(background)
 
     //Collision Testing
-    testObject = TestObject(gameDisplay, Dimension(40, 40))
-    background.add(testObject)
-
-    testObject2 = TestObject(gameDisplay, Dimension(600, 450))
-    background.add(testObject2)
+//    testObject = TestObject(gameDisplay, Dimension(40, 40))
+//    background.add(testObject)
+//
+//    testObject2 = TestObject(gameDisplay, Dimension(600, 450))
+//    background.add(testObject2)
 
     //Instantiate Player & Allow to Read Input
     player = Player(gameDisplay)
     background.add(player)
     KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(player)
+
+    testEnemy = Enemy(gameDisplay, player)
+    background.add(testEnemy)
 
     //Start Timers
     setupTimers()
@@ -79,6 +83,11 @@ fun update(){
     player.playerCollisionCheck()
     player.animatePlayer()
     player.movePlayer()
+
+    testEnemy.enemyCollisionCheck()
+    testEnemy.checkForPlayer()
+    testEnemy.animateEnemy()
+    testEnemy.moveEnemy()
 }
 
 class TestObject(private val gameDisplay : Display, private val spawn : Dimension): JButton("+") {

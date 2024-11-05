@@ -27,6 +27,7 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
     private lateinit var runAnimation : Animation
     private lateinit var idleLAnimation : Animation
     private lateinit var runLAnimation : Animation
+    private var isLeft : Boolean = false
 
     //physics
     private var isColliding : Boolean = false
@@ -80,12 +81,14 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
         if (verticalInput != 0 || horizontalInput != 0){
             if (horizontalInput == 1){
                 if (playerAnimator.getCurrentAnimation() != runAnimation) {
+                    isLeft = false
                     playerAnimator.setAnimation(runAnimation)
                     playerAnimator.playAnimation()
                 }
             }
             else if (horizontalInput == -1){
                 if (playerAnimator.getCurrentAnimation() != runLAnimation) {
+                    isLeft = false
                     playerAnimator.setAnimation(runLAnimation)
                     playerAnimator.playAnimation()
                 }
@@ -93,12 +96,14 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
             else {
                 if (playerAnimator.getCurrentAnimation() == idleLAnimation || playerAnimator.getCurrentAnimation() == runLAnimation) {
                     if (playerAnimator.getCurrentAnimation() != runLAnimation) {
+                        isLeft = true
                         playerAnimator.setAnimation(runLAnimation)
                         playerAnimator.playAnimation()
                     }
                 }
                 else {
                     if (playerAnimator.getCurrentAnimation() != runAnimation) {
+                        isLeft = false
                         playerAnimator.setAnimation(runAnimation)
                         playerAnimator.playAnimation()
                     }
@@ -108,12 +113,14 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
         else {
             if (playerAnimator.getCurrentAnimation() == runAnimation){
                 if (playerAnimator.getCurrentAnimation() != idleAnimation) {
+                    isLeft = false
                     playerAnimator.setAnimation(idleAnimation)
                     playerAnimator.playAnimation()
                 }
             }
             else if (playerAnimator.getCurrentAnimation() == runLAnimation){
                 if (playerAnimator.getCurrentAnimation() != idleLAnimation) {
+                    isLeft = true
                     playerAnimator.setAnimation(idleLAnimation)
                     playerAnimator.playAnimation()
                 }

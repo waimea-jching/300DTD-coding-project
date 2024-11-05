@@ -11,6 +11,9 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
     private val enemySpawnPadding : Int = 27
 
     private lateinit var idleAnimation : Animation
+    private lateinit var idleLAnimation : Animation
+    private lateinit var runAnimation : Animation
+    private lateinit var runLAnimation : Animation
     private var isLeft : Boolean = false
 
     private val aggressionDistance : Int = 120
@@ -24,11 +27,13 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
         val xCoordinate = Random.nextInt(spawnArea.x ,spawnArea.width)
         val yCoordinate = Random.nextInt(spawnArea.y ,spawnArea.height)
 
-        bounds = Rectangle (xCoordinate, yCoordinate, 72, 70)
+        bounds = Rectangle (xCoordinate, yCoordinate, 58, 60)
 
         enemyCollider = Collider(bounds, gameDisplay)
         enemyAnimator = Animator()
 
+        if (Random.nextInt(0, 1) == 1) isLeft = true
+        else isLeft = false
         setupAnimations()
     }
 
@@ -96,12 +101,67 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
             "src/Animations/Enemy_Idle/frame_6.png", "src/Animations/Enemy_Idle/frame_7.png",))
         idleAnimation = Animation(paths, 5, bounds)
 
+        paths.clear()
+        paths.addAll(listOf("src/Animations/Enemy_Idle_Left/frame_0.png", "src/Animations/Enemy_Idle_Left/frame_1.png",
+            "src/Animations/Enemy_Idle_Left/frame_2.png", "src/Animations/Enemy_Idle_Left/frame_3.png",
+            "src/Animations/Enemy_Idle_Left/frame_4.png", "src/Animations/Enemy_Idle_Left/frame_5.png",
+            "src/Animations/Enemy_Idle_Left/frame_6.png", "src/Animations/Enemy_Idle_Left/frame_7.png",))
+        idleLAnimation = Animation(paths, 5, bounds)
+
+        paths.clear()
+        paths.addAll(listOf("src/Animations/Enemy_Run/frame_0.png", "src/Animations/Enemy_Run/frame_1.png",
+            "src/Animations/Enemy_Run/frame_2.png", "src/Animations/Enemy_Run/frame_3.png",
+            "src/Animations/Enemy_Run/frame_4.png", "src/Animations/Enemy_Run/frame_5.png",
+            "src/Animations/Enemy_Run/frame_6.png", "src/Animations/Enemy_Run/frame_7.png",))
+        runAnimation = Animation(paths, 5, bounds)
+
+        paths.clear()
+        paths.addAll(listOf("src/Animations/Enemy_Run_Left/frame_0.png", "src/Animations/Enemy_Run_Left/frame_1.png",
+            "src/Animations/Enemy_Run_Left/frame_2.png", "src/Animations/Enemy_Run_Left/frame_3.png",
+            "src/Animations/Enemy_Run_Left/frame_4.png", "src/Animations/Enemy_Run_Left/frame_5.png",
+            "src/Animations/Enemy_Run_Left/frame_6.png", "src/Animations/Enemy_Run_Left/frame_7.png",))
+        runLAnimation = Animation(paths, 5, bounds)
+
         enemyAnimator.setAnimation(idleAnimation)
         enemyAnimator.loop = true
         enemyAnimator.playAnimation()
     }
 
     fun animateEnemy() {
+        if (isNearPlayer){
+            val moveDirection = getDirectionToPlayer()
+
+            if (moveDirection.width > 0) isLeft = false
+            else if (moveDirection.width < 0) isLeft = true
+
+            if (isLeft) {
+                if (enemyAnimator.getCurrentAnimation() != runLAnimation) {
+                    enemyAnimator.setAnimation(runLAnimation)
+                    enemyAnimator.playAnimation()
+                }
+            }
+            else {
+                if (enemyAnimator.getCurrentAnimation() != runAnimation) {
+                    enemyAnimator.setAnimation(runAnimation)
+                    enemyAnimator.playAnimation()
+                }
+            }
+        }
+        else {
+            if (isLeft) {
+                if (enemyAnimator.getCurrentAnimation() != idleLAnimation) {
+                    enemyAnimator.setAnimation(idleLAnimation)
+                    enemyAnimator.playAnimation()
+                }
+            }
+            else {
+                if (enemyAnimator.getCurrentAnimation() != idleAnimation) {
+                    enemyAnimator.setAnimation(idleAnimation)
+                    enemyAnimator.playAnimation()
+                }
+            }
+        }
+
         icon = enemyAnimator.getCurrentFrame()
     }
 }

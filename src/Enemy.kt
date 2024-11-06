@@ -5,8 +5,9 @@ import kotlin.math.sqrt
 import kotlin.random.Random
 
 class Enemy(private val gameDisplay: Display, private val player : Player) : JLabel() {
-    private val enemyAnimator : Animator
-    private val enemyCollider : Collider
+
+    val enemyAnimator : Animator
+    val enemyCollider : Collider
 
     private val enemySpawnPadding : Int = 27
 
@@ -23,23 +24,23 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
     private var isColliding : Boolean = false
 
     init {
-        val spawnArea = Rectangle(enemySpawnPadding, enemySpawnPadding, gameDisplay.displayBoundary.width - (enemySpawnPadding * 2), gameDisplay.displayBoundary.height - (enemySpawnPadding * 2))
-        val xCoordinate = Random.nextInt(spawnArea.x ,spawnArea.width)
-        val yCoordinate = Random.nextInt(spawnArea.y ,spawnArea.height)
-
-        bounds = Rectangle (xCoordinate, yCoordinate, 58, 60)
+        spawn()
 
         enemyCollider = Collider(bounds, gameDisplay)
         enemyAnimator = Animator()
 
+        while (enemyCollider.isColliding()){
+            spawn()
+        }
+
         if (Random.nextInt(0, 1) == 1) isLeft = true
         else isLeft = false
+
         setupAnimations()
     }
 
     fun checkForPlayer() {
         val aggressionBounds = Rectangle (bounds.x - aggressionDistance, bounds.y - aggressionDistance, bounds.x + bounds.width + aggressionDistance, bounds.y + bounds.height + aggressionDistance)
-
         isNearPlayer = aggressionBounds.intersects(player.bounds)
     }
 
@@ -134,16 +135,50 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
             if (moveDirection.width > 0) isLeft = false
             else if (moveDirection.width < 0) isLeft = true
 
-            if (isLeft) {
-                if (enemyAnimator.getCurrentAnimation() != runLAnimation) {
-                    enemyAnimator.setAnimation(runLAnimation)
-                    enemyAnimator.playAnimation()
+            if (!isColliding) {
+                if (isLeft) {
+                    if (enemyAnimator.getCurrentAnimation() != runLAnimation) {
+                        enemyAnimator.setAnimation(runLAnimation)
+                        enemyAnimator.playAnimation()
+                    }
+                }
+                else {
+                    if (enemyAnimator.getCurrentAnimation() != runAnimation) {
+                        enemyAnimator.setAnimation(runAnimation)
+                        enemyAnimator.playAnimation()
+                    }
                 }
             }
             else {
-                if (enemyAnimator.getCurrentAnimation() != runAnimation) {
-                    enemyAnimator.setAnimation(runAnimation)
-                    enemyAnimator.playAnimation()
+                val collisionDirection = enemyCollider.getCollisionDirection()
+
+                if (collisionDirection.width != moveDirection.width || collisionDirection.height != moveDirection.height) {
+                    if (isLeft) {
+                        if (enemyAnimator.getCurrentAnimation() != runLAnimation) {
+                            enemyAnimator.setAnimation(runLAnimation)
+                            enemyAnimator.playAnimation()
+                        }
+                    }
+                    else {
+                        if (enemyAnimator.getCurrentAnimation() != runAnimation) {
+                            enemyAnimator.setAnimation(runAnimation)
+                            enemyAnimator.playAnimation()
+                        }
+                    }
+                }
+                else if (collisionDirection.width == moveDirection.width && collisionDirection.height == moveDirection.height) {
+                    if (isLeft) {
+                        if (enemyAnimator.getCurrentAnimation() != idleLAnimation) {
+                            enemyAnimator.setAnimation(idleLAnimation)
+                            enemyAnimator.playAnimation()
+                        }
+                    }
+                    else {
+                        if (enemyAnimator.getCurrentAnimation() != idleAnimation) {
+                            enemyAnimator.setAnimation(idleAnimation)
+                            enemyAnimator.playAnimation()
+                        }
+                    }
                 }
             }
         }
@@ -163,5 +198,13 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
         }
 
         icon = enemyAnimator.getCurrentFrame()
+    }
+
+    fun spawn() {
+        val spawnArea = Rectangle(enemySpawnPadding, enemySpawnPadding, enemySpawnPadding + gameDisplay.displayBoundary.width - (enemySpawnPadding * 2), enemySpawnPadding + gameDisplay.displayBoundary.height - (enemySpawnPadding * 2))
+        val xCoordinate = Random.nextInt(spawnArea.x ,spawnArea.width)
+        val yCoordinate = Random.nextInt(spawnArea.y ,spawnArea.height)
+
+        bounds = Rectangle (xCoordinate, yCoordinate, 58, 60)
     }
 }

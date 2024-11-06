@@ -94,4 +94,8 @@ class Collider(private var bounds : Rectangle, private val gameDisplay: Display)
 
         return collisionDirection
     }
+
+    fun destroyCollider() {
+        globalColliders.remove(this)
+    }
 }

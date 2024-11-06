@@ -8,6 +8,7 @@ import javax.swing.ImageIcon
 import javax.swing.JButton
 import javax.swing.JLabel
 import javax.swing.SwingConstants
+import kotlin.concurrent.thread
 import kotlin.math.abs
 
 
@@ -31,9 +32,11 @@ import kotlin.math.abs
 lateinit var gameDisplay : Display
 lateinit var background : JLabel
 
-lateinit var testObject: JButton
-lateinit var testObject2: JButton
-lateinit var testEnemy : Enemy
+val testEnemys = mutableListOf<Enemy>()
+
+//Rooms
+lateinit private var currentRoom : Room
+lateinit private var room1 : Room
 
 //Player Instance
 lateinit var player : Player
@@ -58,24 +61,18 @@ fun awake(){
     background = JLabel()
     background.bounds = Rectangle(0, 0, 800, 600)
     background.icon = backgroundIcon
+    gameDisplay.background = background
     gameDisplay.add(background)
-
-    //Collision Testing
-//    testObject = TestObject(gameDisplay, Dimension(40, 40))
-//    background.add(testObject)
-//
-//    testObject2 = TestObject(gameDisplay, Dimension(600, 450))
-//    background.add(testObject2)
 
     //Instantiate Player & Allow to Read Input
     player = Player(gameDisplay)
     background.add(player)
+
+    setupRooms()
+    currentRoom.loadRoom()
+
+    //Start Timers & enable input
     KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(player)
-
-    testEnemy = Enemy(gameDisplay, player)
-    background.add(testEnemy)
-
-    //Start Timers
     setupTimers()
 }
 
@@ -84,24 +81,16 @@ fun update(){
     player.animatePlayer()
     player.movePlayer()
 
-    testEnemy.enemyCollisionCheck()
-    testEnemy.checkForPlayer()
-    testEnemy.animateEnemy()
-    testEnemy.moveEnemy()
+    currentRoom.updateRoom()
 }
 
-class TestObject(private val gameDisplay : Display, private val spawn : Dimension): JButton("+") {
-    private val objectCollider : Collider
-
-    val flatLafFont = FlatLaf.getPreferredFontFamily()
-    val bigFont = Font(flatLafFont, Font.PLAIN, 40)
-
-    init {
-        bounds = Rectangle(spawn.width, spawn.height, 80, 80)
-        font = bigFont
-
-        objectCollider = Collider(bounds, gameDisplay)
+private fun setupRooms() {
+    room1 = Room(gameDisplay)
+    repeat(4) {
+        room1.addEnemy(player)
     }
+
+    currentRoom = room1
 }
 
 

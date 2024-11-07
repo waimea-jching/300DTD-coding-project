@@ -1,0 +1,258 @@
+<html>
+<head>
+<title>PlayerClass.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #cf8e6d;}
+.s4 { color: #2aacb8;}
+.s5 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+PlayerClass.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">//=============================================================================================</span>
+
+
+<span class="s1">import java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">Dimension</span>
+<span class="s1">import java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">KeyEventDispatcher</span>
+<span class="s1">import java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">Rectangle</span>
+<span class="s1">import java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.</span><span class="s1">KeyEvent</span>
+<span class="s1">import java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.</span><span class="s1">MouseEvent</span>
+<span class="s1">import javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.</span><span class="s1">JLabel</span>
+<span class="s1">import kotlin</span><span class="s2">.</span><span class="s1">math</span><span class="s2">.*</span>
+
+
+<span class="s0">//=============================================================================================</span>
+
+
+<span class="s3">class </span><span class="s1">Player</span><span class="s2">(</span><span class="s1">private </span><span class="s3">val </span><span class="s1">gameDisplay: Display</span><span class="s2">)</span><span class="s1">: JLabel</span><span class="s2">(), </span><span class="s1">KeyEventDispatcher </span><span class="s2">{</span>
+    <span class="s0">//components</span>
+    <span class="s1">private </span><span class="s3">val </span><span class="s1">playerCollider : Collider</span>
+    <span class="s1">private </span><span class="s3">val </span><span class="s1">playerAnimator : Animator</span>
+
+    <span class="s0">//movement</span>
+    <span class="s1">private </span><span class="s3">var </span><span class="s1">verticalInput : Int </span><span class="s2">= </span><span class="s4">0</span>
+    <span class="s1">private </span><span class="s3">var </span><span class="s1">horizontalInput : Int </span><span class="s2">= </span><span class="s4">0</span>
+    <span class="s1">private </span><span class="s3">val </span><span class="s1">moveSpeed : Int </span><span class="s2">= </span><span class="s4">3</span>
+
+    <span class="s0">//Attacking</span>
+    <span class="s1">private </span><span class="s3">var </span><span class="s1">hitBox : Rectangle </span><span class="s2">= </span><span class="s1">Rectangle</span><span class="s2">(</span><span class="s4">0</span><span class="s2">, </span><span class="s4">0</span><span class="s2">, </span><span class="s4">0</span><span class="s2">, </span><span class="s4">0</span><span class="s2">)</span>
+    <span class="s1">private </span><span class="s3">val </span><span class="s1">hitArea </span><span class="s2">= </span><span class="s4">40</span>
+    <span class="s1">private </span><span class="s3">val </span><span class="s1">damage : Int </span><span class="s2">= </span><span class="s4">25</span>
+
+    <span class="s0">//Health</span>
+    <span class="s3">var </span><span class="s1">health : Int </span><span class="s2">= </span><span class="s4">100</span>
+    <span class="s3">var </span><span class="s1">isDead </span><span class="s2">= </span><span class="s3">false</span>
+
+    <span class="s0">//animation</span>
+    <span class="s1">private lateinit </span><span class="s3">var </span><span class="s1">idleAnimation : Animation</span>
+    <span class="s1">private lateinit </span><span class="s3">var </span><span class="s1">runAnimation : Animation</span>
+    <span class="s1">private lateinit </span><span class="s3">var </span><span class="s1">idleLAnimation : Animation</span>
+    <span class="s1">private lateinit </span><span class="s3">var </span><span class="s1">runLAnimation : Animation</span>
+    <span class="s1">private lateinit </span><span class="s3">var </span><span class="s1">attackAnimation : Animation</span>
+    <span class="s1">private lateinit </span><span class="s3">var </span><span class="s1">attackLAnimation : Animation</span>
+    <span class="s1">private lateinit </span><span class="s3">var </span><span class="s1">attackNeutralAnimation : Animation</span>
+    <span class="s1">private </span><span class="s3">var </span><span class="s1">isLeft : Boolean </span><span class="s2">= </span><span class="s3">false</span>
+
+    <span class="s0">//physics</span>
+    <span class="s1">private </span><span class="s3">var </span><span class="s1">isColliding : Boolean </span><span class="s2">= </span><span class="s3">false</span>
+
+    <span class="s1">init </span><span class="s2">{</span>
+        <span class="s0">//set starting position and size of player here</span>
+        <span class="s1">bounds </span><span class="s2">= </span><span class="s1">Rectangle</span><span class="s2">(</span><span class="s4">380</span><span class="s2">,</span><span class="s4">280</span><span class="s2">,</span><span class="s4">54</span><span class="s2">,</span><span class="s4">66</span><span class="s2">)</span>
+        <span class="s1">hitBox </span><span class="s2">= </span><span class="s1">Rectangle</span><span class="s2">(</span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">x </span><span class="s2">- </span><span class="s1">hitArea</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">y </span><span class="s2">- </span><span class="s1">hitArea</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">width </span><span class="s2">+ (</span><span class="s1">hitArea </span><span class="s2">* </span><span class="s4">2</span><span class="s2">), </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">height </span><span class="s2">+ (</span><span class="s1">hitArea </span><span class="s2">* </span><span class="s4">2</span><span class="s2">))</span>
+
+
+        <span class="s0">//setup components &amp; animations</span>
+        <span class="s1">playerCollider </span><span class="s2">= </span><span class="s1">Collider</span><span class="s2">(</span><span class="s3">this</span><span class="s2">, </span><span class="s3">null</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">, </span><span class="s1">gameDisplay</span><span class="s2">)</span>
+        <span class="s1">playerAnimator </span><span class="s2">= </span><span class="s1">Animator</span><span class="s2">()</span>
+        <span class="s1">setUpAnimations</span><span class="s2">()</span>
+    <span class="s2">}</span>
+
+    <span class="s1">private </span><span class="s3">fun </span><span class="s1">setUpAnimations</span><span class="s2">() {</span>
+        <span class="s3">val </span><span class="s1">paths </span><span class="s2">= </span><span class="s1">mutableListOf</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">&gt;()</span>
+
+        <span class="s1">paths</span><span class="s2">.</span><span class="s1">addAll</span><span class="s2">(</span><span class="s1">listOf</span><span class="s2">(</span><span class="s5">&quot;src/Animations/Player_Idle/frame_0.png&quot;</span><span class="s2">, </span><span class="s5">&quot;src/Animations/Player_Idle/frame_1.png&quot;</span><span class="s2">,</span>
+                            <span class="s5">&quot;src/Animations/Player_Idle/frame_2.png&quot;</span><span class="s2">, </span><span class="s5">&quot;src/Animations/Player_Idle/frame_3.png&quot;</span><span class="s2">,</span>
+                            <span class="s5">&quot;src/Animations/Player_Idle/frame_4.png&quot;</span><span class="s2">, </span><span class="s5">&quot;src/Animations/Player_Idle/frame_5.png&quot;</span><span class="s2">,</span>
+                            <span class="s5">&quot;src/Animations/Player_Idle/frame_6.png&quot;</span><span class="s2">, </span><span class="s5">&quot;src/Animations/Player_Idle/frame_7.png&quot;</span><span class="s2">,))</span>
+        <span class="s1">idleAnimation </span><span class="s2">= </span><span class="s1">Animation</span><span class="s2">(</span><span class="s1">paths</span><span class="s2">, </span><span class="s4">5</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">)</span>
+
+        <span class="s1">paths</span><span class="s2">.</span><span class="s1">clear</span><span class="s2">()</span>
+        <span class="s1">paths</span><span class="s2">.</span><span class="s1">addAll</span><span class="s2">(</span><span class="s1">listOf</span><span class="s2">(</span><span class="s5">&quot;src/Animations/Player_Idle_Left/frame_0.png&quot;</span><span class="s2">, </span><span class="s5">&quot;src/Animations/Player_Idle_Left/frame_1.png&quot;</span><span class="s2">,</span>
+                            <span class="s5">&quot;src/Animations/Player_Idle_Left/frame_2.png&quot;</span><span class="s2">, </span><span class="s5">&quot;src/Animations/Player_Idle_Left/frame_3.png&quot;</span><span class="s2">,</span>
+                            <span class="s5">&quot;src/Animations/Player_Idle_Left/frame_4.png&quot;</span><span class="s2">, </span><span class="s5">&quot;src/Animations/Player_Idle_Left/frame_5.png&quot;</span><span class="s2">,</span>
+                            <span class="s5">&quot;src/Animations/Player_Idle_Left/frame_6.png&quot;</span><span class="s2">, </span><span class="s5">&quot;src/Animations/Player_Idle_Left/frame_7.png&quot;</span><span class="s2">,))</span>
+        <span class="s1">idleLAnimation </span><span class="s2">= </span><span class="s1">Animation</span><span class="s2">(</span><span class="s1">paths</span><span class="s2">, </span><span class="s4">5</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">)</span>
+
+        <span class="s1">paths</span><span class="s2">.</span><span class="s1">clear</span><span class="s2">()</span>
+        <span class="s1">paths</span><span class="s2">.</span><span class="s1">addAll</span><span class="s2">(</span><span class="s1">listOf</span><span class="s2">(</span><span class="s5">&quot;src/Animations/Player_Run/frame_0.png&quot;</span><span class="s2">, </span><span class="s5">&quot;src/Animations/Player_Run/frame_1.png&quot;</span><span class="s2">,</span>
+                            <span class="s5">&quot;src/Animations/Player_Run/frame_2.png&quot;</span><span class="s2">, </span><span class="s5">&quot;src/Animations/Player_Run/frame_3.png&quot;</span><span class="s2">,</span>
+                            <span class="s5">&quot;src/Animations/Player_Run/frame_4.png&quot;</span><span class="s2">, </span><span class="s5">&quot;src/Animations/Player_Run/frame_5.png&quot;</span><span class="s2">,</span>
+                            <span class="s5">&quot;src/Animations/Player_Run/frame_6.png&quot;</span><span class="s2">, </span><span class="s5">&quot;src/Animations/Player_Run/frame_7.png&quot;</span><span class="s2">,))</span>
+        <span class="s1">runAnimation </span><span class="s2">= </span><span class="s1">Animation</span><span class="s2">(</span><span class="s1">paths</span><span class="s2">, </span><span class="s4">5</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">)</span>
+
+        <span class="s1">paths</span><span class="s2">.</span><span class="s1">clear</span><span class="s2">()</span>
+        <span class="s1">paths</span><span class="s2">.</span><span class="s1">addAll</span><span class="s2">(</span><span class="s1">listOf</span><span class="s2">(</span><span class="s5">&quot;src/Animations/Player_Run_Left/frame_0.png&quot;</span><span class="s2">, </span><span class="s5">&quot;src/Animations/Player_Run_Left/frame_1.png&quot;</span><span class="s2">,</span>
+                            <span class="s5">&quot;src/Animations/Player_Run_Left/frame_2.png&quot;</span><span class="s2">, </span><span class="s5">&quot;src/Animations/Player_Run_Left/frame_3.png&quot;</span><span class="s2">,</span>
+                            <span class="s5">&quot;src/Animations/Player_Run_Left/frame_4.png&quot;</span><span class="s2">, </span><span class="s5">&quot;src/Animations/Player_Run_Left/frame_5.png&quot;</span><span class="s2">,</span>
+                            <span class="s5">&quot;src/Animations/Player_Run_Left/frame_6.png&quot;</span><span class="s2">, </span><span class="s5">&quot;src/Animations/Player_Run_Left/frame_7.png&quot;</span><span class="s2">,))</span>
+        <span class="s1">runLAnimation </span><span class="s2">= </span><span class="s1">Animation</span><span class="s2">(</span><span class="s1">paths</span><span class="s2">, </span><span class="s4">5</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">)</span>
+
+        <span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">setAnimation</span><span class="s2">(</span><span class="s1">idleAnimation</span><span class="s2">)</span>
+        <span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">loop </span><span class="s2">= </span><span class="s3">true</span>
+        <span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">playAnimation</span><span class="s2">()</span>
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">animatePlayer</span><span class="s2">() {</span>
+        <span class="s3">if </span><span class="s2">(</span><span class="s1">verticalInput </span><span class="s2">!= </span><span class="s4">0 </span><span class="s2">|| </span><span class="s1">horizontalInput </span><span class="s2">!= </span><span class="s4">0</span><span class="s2">){</span>
+            <span class="s3">if </span><span class="s2">(</span><span class="s1">horizontalInput </span><span class="s2">== </span><span class="s4">1</span><span class="s2">){</span>
+                <span class="s3">if </span><span class="s2">(</span><span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">getCurrentAnimation</span><span class="s2">() != </span><span class="s1">runAnimation</span><span class="s2">) {</span>
+                    <span class="s1">isLeft </span><span class="s2">= </span><span class="s3">false</span>
+                    <span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">setAnimation</span><span class="s2">(</span><span class="s1">runAnimation</span><span class="s2">)</span>
+                    <span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">playAnimation</span><span class="s2">()</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+            <span class="s3">else if </span><span class="s2">(</span><span class="s1">horizontalInput </span><span class="s2">== -</span><span class="s4">1</span><span class="s2">){</span>
+                <span class="s3">if </span><span class="s2">(</span><span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">getCurrentAnimation</span><span class="s2">() != </span><span class="s1">runLAnimation</span><span class="s2">) {</span>
+                    <span class="s1">isLeft </span><span class="s2">= </span><span class="s3">false</span>
+                    <span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">setAnimation</span><span class="s2">(</span><span class="s1">runLAnimation</span><span class="s2">)</span>
+                    <span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">playAnimation</span><span class="s2">()</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+            <span class="s3">else </span><span class="s2">{</span>
+                <span class="s3">if </span><span class="s2">(</span><span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">getCurrentAnimation</span><span class="s2">() == </span><span class="s1">idleLAnimation </span><span class="s2">|| </span><span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">getCurrentAnimation</span><span class="s2">() == </span><span class="s1">runLAnimation</span><span class="s2">) {</span>
+                    <span class="s3">if </span><span class="s2">(</span><span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">getCurrentAnimation</span><span class="s2">() != </span><span class="s1">runLAnimation</span><span class="s2">) {</span>
+                        <span class="s1">isLeft </span><span class="s2">= </span><span class="s3">true</span>
+                        <span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">setAnimation</span><span class="s2">(</span><span class="s1">runLAnimation</span><span class="s2">)</span>
+                        <span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">playAnimation</span><span class="s2">()</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+                <span class="s3">else </span><span class="s2">{</span>
+                    <span class="s3">if </span><span class="s2">(</span><span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">getCurrentAnimation</span><span class="s2">() != </span><span class="s1">runAnimation</span><span class="s2">) {</span>
+                        <span class="s1">isLeft </span><span class="s2">= </span><span class="s3">false</span>
+                        <span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">setAnimation</span><span class="s2">(</span><span class="s1">runAnimation</span><span class="s2">)</span>
+                        <span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">playAnimation</span><span class="s2">()</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+        <span class="s3">else </span><span class="s2">{</span>
+            <span class="s3">if </span><span class="s2">(</span><span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">getCurrentAnimation</span><span class="s2">() == </span><span class="s1">runAnimation</span><span class="s2">){</span>
+                <span class="s3">if </span><span class="s2">(</span><span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">getCurrentAnimation</span><span class="s2">() != </span><span class="s1">idleAnimation</span><span class="s2">) {</span>
+                    <span class="s1">isLeft </span><span class="s2">= </span><span class="s3">false</span>
+                    <span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">setAnimation</span><span class="s2">(</span><span class="s1">idleAnimation</span><span class="s2">)</span>
+                    <span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">playAnimation</span><span class="s2">()</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+            <span class="s3">else if </span><span class="s2">(</span><span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">getCurrentAnimation</span><span class="s2">() == </span><span class="s1">runLAnimation</span><span class="s2">){</span>
+                <span class="s3">if </span><span class="s2">(</span><span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">getCurrentAnimation</span><span class="s2">() != </span><span class="s1">idleLAnimation</span><span class="s2">) {</span>
+                    <span class="s1">isLeft </span><span class="s2">= </span><span class="s3">true</span>
+                    <span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">setAnimation</span><span class="s2">(</span><span class="s1">idleLAnimation</span><span class="s2">)</span>
+                    <span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">playAnimation</span><span class="s2">()</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s1">icon </span><span class="s2">= </span><span class="s1">playerAnimator</span><span class="s2">.</span><span class="s1">getCurrentFrame</span><span class="s2">()</span>
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">movePlayer</span><span class="s2">() {</span>
+        <span class="s3">val </span><span class="s1">newPosition </span><span class="s2">= </span><span class="s1">bounds</span>
+        <span class="s3">val </span><span class="s1">calculatedMoveSpeed : Int</span>
+
+        <span class="s0">//check if player is moving diagonally and normalise</span>
+        <span class="s0">// the speed based on the input vector</span>
+        <span class="s3">if </span><span class="s2">(</span><span class="s1">horizontalInput </span><span class="s2">!= </span><span class="s4">0 </span><span class="s2">&amp;&amp; </span><span class="s1">verticalInput </span><span class="s2">!= </span><span class="s4">0</span><span class="s2">) {</span>
+            <span class="s3">val </span><span class="s1">inputVector </span><span class="s2">= </span><span class="s1">sqrt</span><span class="s2">((</span><span class="s1">horizontalInput</span><span class="s2">.</span><span class="s1">toFloat</span><span class="s2">() * </span><span class="s1">horizontalInput</span><span class="s2">.</span><span class="s1">toFloat</span><span class="s2">()) + (</span><span class="s1">verticalInput</span><span class="s2">.</span><span class="s1">toFloat</span><span class="s2">() * </span><span class="s1">verticalInput</span><span class="s2">.</span><span class="s1">toFloat</span><span class="s2">()))</span>
+            <span class="s1">calculatedMoveSpeed </span><span class="s2">= (</span><span class="s1">moveSpeed</span><span class="s2">.</span><span class="s1">toFloat</span><span class="s2">() / </span><span class="s1">inputVector</span><span class="s2">).</span><span class="s1">toInt</span><span class="s2">()</span>
+        <span class="s2">}</span>
+        <span class="s3">else </span><span class="s1">calculatedMoveSpeed </span><span class="s2">= </span><span class="s1">moveSpeed</span>
+
+        <span class="s3">if </span><span class="s2">(!</span><span class="s1">isColliding</span><span class="s2">) {</span>
+            <span class="s1">newPosition</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+= (</span><span class="s1">horizontalInput </span><span class="s2">* </span><span class="s1">calculatedMoveSpeed</span><span class="s2">)</span>
+            <span class="s1">newPosition</span><span class="s2">.</span><span class="s1">y </span><span class="s2">+= (</span><span class="s1">verticalInput </span><span class="s2">* </span><span class="s1">calculatedMoveSpeed</span><span class="s2">)</span>
+            <span class="s1">bounds </span><span class="s2">= </span><span class="s1">newPosition</span>
+        <span class="s2">}</span>
+        <span class="s3">else </span><span class="s2">{</span>
+            <span class="s0">//if colliding we stop the player from</span>
+            <span class="s0">// moving in the direction of the collision</span>
+            <span class="s3">val </span><span class="s1">collisionDirection : Dimension </span><span class="s2">= </span><span class="s1">playerCollider</span><span class="s2">.</span><span class="s1">getCollisionDirection</span><span class="s2">()</span>
+            <span class="s3">if </span><span class="s2">(</span><span class="s1">collisionDirection</span><span class="s2">.</span><span class="s1">width </span><span class="s2">!= </span><span class="s1">horizontalInput</span><span class="s2">) </span><span class="s1">newPosition</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+= (</span><span class="s1">horizontalInput </span><span class="s2">* </span><span class="s1">moveSpeed</span><span class="s2">)</span>
+            <span class="s3">if </span><span class="s2">(</span><span class="s1">collisionDirection</span><span class="s2">.</span><span class="s1">height </span><span class="s2">!= </span><span class="s1">verticalInput</span><span class="s2">) </span><span class="s1">newPosition</span><span class="s2">.</span><span class="s1">y </span><span class="s2">+= (</span><span class="s1">verticalInput </span><span class="s2">* </span><span class="s1">moveSpeed</span><span class="s2">)</span>
+            <span class="s1">bounds </span><span class="s2">= </span><span class="s1">newPosition</span>
+        <span class="s2">}</span>
+
+        <span class="s0">//update player collider &amp; add new positioned</span>
+        <span class="s0">// player to game display</span>
+        <span class="s1">playerCollider</span><span class="s2">.</span><span class="s1">updateCollider</span><span class="s2">(</span><span class="s1">newPosition</span><span class="s2">)</span>
+        <span class="s1">hitBox </span><span class="s2">= </span><span class="s1">Rectangle</span><span class="s2">(</span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">x </span><span class="s2">- </span><span class="s1">hitArea</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">y </span><span class="s2">- </span><span class="s1">hitArea</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">width </span><span class="s2">+ (</span><span class="s1">hitArea </span><span class="s2">* </span><span class="s4">2</span><span class="s2">), </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">height </span><span class="s2">+ (</span><span class="s1">hitArea </span><span class="s2">* </span><span class="s4">2</span><span class="s2">))</span>
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">attack</span><span class="s2">(){</span>
+        <span class="s3">val </span><span class="s1">hits </span><span class="s2">= </span><span class="s1">playerCollider</span><span class="s2">.</span><span class="s1">getCustomCollision</span><span class="s2">(</span><span class="s1">hitBox</span><span class="s2">)</span>
+        <span class="s3">if </span><span class="s2">(</span><span class="s1">hits</span><span class="s2">.</span><span class="s1">isNotEmpty</span><span class="s2">()) {</span>
+            <span class="s3">for </span><span class="s2">(</span><span class="s1">hit </span><span class="s3">in </span><span class="s1">hits</span><span class="s2">) {</span>
+                <span class="s3">if </span><span class="s2">(</span><span class="s1">hit</span><span class="s2">.</span><span class="s1">classPlayer </span><span class="s2">!= </span><span class="s3">null</span><span class="s2">){</span>
+                    <span class="s1">hit</span><span class="s2">.</span><span class="s1">classPlayer</span><span class="s2">!!.</span><span class="s1">health </span><span class="s2">-= </span><span class="s1">damage</span>
+                    <span class="s1">hit</span><span class="s2">.</span><span class="s1">classPlayer</span><span class="s2">!!.</span><span class="s1">hurt</span><span class="s2">()</span>
+                <span class="s2">}</span>
+                <span class="s3">if </span><span class="s2">(</span><span class="s1">hit</span><span class="s2">.</span><span class="s1">classEnemy </span><span class="s2">!= </span><span class="s3">null</span><span class="s2">){</span>
+                    <span class="s1">hit</span><span class="s2">.</span><span class="s1">classEnemy</span><span class="s2">!!.</span><span class="s1">health </span><span class="s2">-= </span><span class="s1">damage</span>
+                    <span class="s1">hit</span><span class="s2">.</span><span class="s1">classEnemy</span><span class="s2">!!.</span><span class="s1">hurt</span><span class="s2">()</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">hurt</span><span class="s2">(){</span>
+        <span class="s1">println</span><span class="s2">(</span><span class="s1">health</span><span class="s2">)</span>
+        <span class="s3">if </span><span class="s2">(</span><span class="s1">health </span><span class="s2">&lt;= </span><span class="s4">0</span><span class="s2">){</span>
+            <span class="s1">health </span><span class="s2">= </span><span class="s4">0</span>
+            <span class="s1">die</span><span class="s2">()</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">playerCollisionCheck</span><span class="s2">(){</span>
+        <span class="s1">isColliding </span><span class="s2">= </span><span class="s1">playerCollider</span><span class="s2">.</span><span class="s1">isColliding</span><span class="s2">()</span>
+    <span class="s2">}</span>
+
+    <span class="s1">override </span><span class="s3">fun </span><span class="s1">dispatchKeyEvent</span><span class="s2">(</span><span class="s1">e: KeyEvent?</span><span class="s2">)</span><span class="s1">: Boolean </span><span class="s2">{</span>
+        <span class="s0">// Was it a key press event</span>
+        <span class="s3">if</span><span class="s2">(</span><span class="s1">e?</span><span class="s2">.</span><span class="s1">id </span><span class="s2">== </span><span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">KEY_PRESSED</span><span class="s2">) {</span>
+            <span class="s3">when </span><span class="s2">(</span><span class="s1">e</span><span class="s2">.</span><span class="s1">keyCode</span><span class="s2">) {</span>
+                <span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_W </span><span class="s2">-&gt; </span><span class="s1">verticalInput </span><span class="s2">= -</span><span class="s4">1</span>
+                <span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_A </span><span class="s2">-&gt; </span><span class="s1">horizontalInput </span><span class="s2">= -</span><span class="s4">1</span>
+                <span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_S </span><span class="s2">-&gt; </span><span class="s1">verticalInput </span><span class="s2">= </span><span class="s4">1</span>
+                <span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_D </span><span class="s2">-&gt; </span><span class="s1">horizontalInput </span><span class="s2">= </span><span class="s4">1</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+        <span class="s0">//was it a release event</span>
+        <span class="s3">if</span><span class="s2">(</span><span class="s1">e?</span><span class="s2">.</span><span class="s1">id </span><span class="s2">== </span><span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">KEY_RELEASED</span><span class="s2">) {</span>
+            <span class="s3">when </span><span class="s2">(</span><span class="s1">e</span><span class="s2">.</span><span class="s1">keyCode</span><span class="s2">) {</span>
+                <span class="s0">//checking if the player is moving before</span>
+                <span class="s0">// culling input on key release</span>
+                <span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_W </span><span class="s2">-&gt; </span><span class="s3">if </span><span class="s2">(</span><span class="s1">verticalInput </span><span class="s2">!= </span><span class="s4">1</span><span class="s2">)</span><span class="s1">verticalInput </span><span class="s2">= </span><span class="s4">0</span>
+                <span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_A </span><span class="s2">-&gt; </span><span class="s3">if </span><span class="s2">(</span><span class="s1">horizontalInput </span><span class="s2">!= </span><span class="s4">1</span><span class="s2">) </span><span class="s1">horizontalInput </span><span class="s2">= </span><span class="s4">0</span>
+                <span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_S </span><span class="s2">-&gt; </span><span class="s3">if </span><span class="s2">(</span><span class="s1">verticalInput </span><span class="s2">!= -</span><span class="s4">1</span><span class="s2">)</span><span class="s1">verticalInput </span><span class="s2">= </span><span class="s4">0</span>
+                <span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_D </span><span class="s2">-&gt; </span><span class="s3">if </span><span class="s2">(</span><span class="s1">horizontalInput </span><span class="s2">!= -</span><span class="s4">1</span><span class="s2">) </span><span class="s1">horizontalInput </span><span class="s2">= </span><span class="s4">0</span>
+                <span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_SHIFT </span><span class="s2">-&gt; </span><span class="s1">attack</span><span class="s2">()</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+        <span class="s3">return false</span>
+    <span class="s2">}</span>
+
+    <span class="s1">private </span><span class="s3">fun </span><span class="s1">die</span><span class="s2">(){</span>
+        <span class="s1">isDead </span><span class="s2">= </span><span class="s3">true</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

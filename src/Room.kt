@@ -7,13 +7,9 @@ import javax.swing.JLabel
 //=============================================================================================
 
 class Room(private val gameDisplay: Display) {
-    val doors = mutableListOf<Door>()
     val enemys = mutableListOf<Enemy>()
 
     fun loadRoom() {
-        for (door in doors) {
-            gameDisplay.background.add(door)
-        }
 
         for (enemy in enemys) {
             gameDisplay.background.add(enemy)
@@ -22,27 +18,26 @@ class Room(private val gameDisplay: Display) {
 
     fun deloadRoom() {
         for (enemy in enemys) {
+            enemy.isVisible = false
             enemy.enemyAnimator.stopAnimation()
             enemy.enemyCollider.destroyCollider()
             gameDisplay.background.remove(enemy)
-        }
-
-        for (door in doors) {
-            gameDisplay.background.remove(door)
+            enemy.isDead = true
         }
     }
 
     fun updateRoom() {
         for (enemy in enemys) {
-            enemy.enemyCollisionCheck()
-            enemy.checkForPlayer()
-            enemy.animateEnemy()
-            enemy.moveEnemy()
+            if (!enemy.isDead) {
+                enemy.enemyCollisionCheck()
+                enemy.checkForPlayer()
+                enemy.animateEnemy()
+                enemy.moveEnemy()
+            }
+            else {
+                enemys.remove(enemy)
+            }
         }
-    }
-
-    fun addDoor(door: Door) {
-        doors.add(door)
     }
 
     fun addEnemy(player : Player) {

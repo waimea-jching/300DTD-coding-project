@@ -12,7 +12,7 @@ import javax.swing.Timer
 private const val frameRate : Int = 30 /*ticks per second*/
 
 //Timers
-private lateinit var updateTimer: Timer
+lateinit var updateTimer: Timer
 
 fun setupTimers() {
     val updateListener = ActionListener {

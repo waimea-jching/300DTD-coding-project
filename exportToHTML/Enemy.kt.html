@@ -1,0 +1,292 @@
+<html>
+<head>
+<title>Enemy.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #bcbec4;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #2aacb8;}
+.s4 { color: #7a7e85;}
+.s5 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Enemy.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">import java</span><span class="s1">.</span><span class="s0">awt</span><span class="s1">.</span><span class="s0">Dimension</span>
+<span class="s0">import java</span><span class="s1">.</span><span class="s0">awt</span><span class="s1">.</span><span class="s0">Rectangle</span>
+<span class="s0">import java</span><span class="s1">.</span><span class="s0">awt</span><span class="s1">.</span><span class="s0">event</span><span class="s1">.</span><span class="s0">ActionListener</span>
+<span class="s0">import javax</span><span class="s1">.</span><span class="s0">swing</span><span class="s1">.</span><span class="s0">JLabel</span>
+<span class="s0">import kotlin</span><span class="s1">.</span><span class="s0">math</span><span class="s1">.</span><span class="s0">sqrt</span>
+<span class="s0">import kotlin</span><span class="s1">.</span><span class="s0">random</span><span class="s1">.</span><span class="s0">Random</span>
+<span class="s0">import javax</span><span class="s1">.</span><span class="s0">swing</span><span class="s1">.</span><span class="s0">Timer</span>
+
+<span class="s2">class </span><span class="s0">Enemy</span><span class="s1">(</span><span class="s0">private </span><span class="s2">val </span><span class="s0">gameDisplay: Display</span><span class="s1">, </span><span class="s0">private </span><span class="s2">val </span><span class="s0">player : Player</span><span class="s1">) </span><span class="s0">: JLabel</span><span class="s1">() {</span>
+
+    <span class="s2">val </span><span class="s0">enemyAnimator : Animator</span>
+    <span class="s2">val </span><span class="s0">enemyCollider : Collider</span>
+
+    <span class="s0">private </span><span class="s2">val </span><span class="s0">enemySpawnPadding : Int </span><span class="s1">= </span><span class="s3">27</span>
+
+    <span class="s4">//Attacking</span>
+    <span class="s0">private </span><span class="s2">var </span><span class="s0">hitBox : Rectangle </span><span class="s1">= </span><span class="s0">Rectangle</span><span class="s1">(</span><span class="s3">0</span><span class="s1">, </span><span class="s3">0</span><span class="s1">, </span><span class="s3">0</span><span class="s1">, </span><span class="s3">0</span><span class="s1">)</span>
+    <span class="s0">private </span><span class="s2">val </span><span class="s0">hitArea </span><span class="s1">= </span><span class="s3">25</span>
+    <span class="s0">private </span><span class="s2">val </span><span class="s0">damage : Int </span><span class="s1">= </span><span class="s3">7</span>
+    <span class="s0">private </span><span class="s2">val </span><span class="s0">tps : Int </span><span class="s1">= </span><span class="s3">1</span>
+    <span class="s0">private </span><span class="s2">val </span><span class="s0">attackListener : ActionListener </span><span class="s1">= </span><span class="s0">ActionListener </span><span class="s1">{</span><span class="s0">attack</span><span class="s1">()}</span>
+    <span class="s0">private </span><span class="s2">val </span><span class="s0">attackTimer : Timer </span><span class="s1">= </span><span class="s0">Timer</span><span class="s1">(</span><span class="s0">tps </span><span class="s1">* </span><span class="s3">1000</span><span class="s1">, </span><span class="s0">attackListener</span><span class="s1">)</span>
+
+    <span class="s4">//Health</span>
+    <span class="s2">var </span><span class="s0">health : Int </span><span class="s1">= </span><span class="s3">100</span>
+    <span class="s2">var </span><span class="s0">isDead </span><span class="s1">= </span><span class="s2">false</span>
+
+    <span class="s0">private lateinit </span><span class="s2">var </span><span class="s0">idleAnimation : Animation</span>
+    <span class="s0">private lateinit </span><span class="s2">var </span><span class="s0">idleLAnimation : Animation</span>
+    <span class="s0">private lateinit </span><span class="s2">var </span><span class="s0">runAnimation : Animation</span>
+    <span class="s0">private lateinit </span><span class="s2">var </span><span class="s0">runLAnimation : Animation</span>
+    <span class="s0">private lateinit </span><span class="s2">var </span><span class="s0">attackAnimation : Animation</span>
+    <span class="s0">private lateinit </span><span class="s2">var </span><span class="s0">attackLAnimation : Animation</span>
+    <span class="s0">private </span><span class="s2">var </span><span class="s0">isLeft : Boolean </span><span class="s1">= </span><span class="s2">false</span>
+
+    <span class="s0">private </span><span class="s2">val </span><span class="s0">aggressionDistance : Int </span><span class="s1">= </span><span class="s3">120</span>
+    <span class="s0">private </span><span class="s2">val </span><span class="s0">aggressionPadding : Int </span><span class="s1">= </span><span class="s3">3</span>
+    <span class="s0">private </span><span class="s2">var </span><span class="s0">isNearPlayer : Boolean </span><span class="s1">= </span><span class="s2">false</span>
+    <span class="s0">private </span><span class="s2">var </span><span class="s0">canAttack : Boolean </span><span class="s1">= </span><span class="s2">false</span>
+    <span class="s0">private </span><span class="s2">val </span><span class="s0">moveSpeed : Int </span><span class="s1">= </span><span class="s3">2</span>
+    <span class="s0">private </span><span class="s2">var </span><span class="s0">isColliding : Boolean </span><span class="s1">= </span><span class="s2">false</span>
+
+    <span class="s0">init </span><span class="s1">{</span>
+        <span class="s0">spawn</span><span class="s1">()</span>
+
+        <span class="s0">enemyCollider </span><span class="s1">= </span><span class="s0">Collider</span><span class="s1">(</span><span class="s2">null</span><span class="s1">, </span><span class="s2">this</span><span class="s1">, </span><span class="s0">bounds</span><span class="s1">, </span><span class="s0">gameDisplay</span><span class="s1">)</span>
+        <span class="s0">enemyAnimator </span><span class="s1">= </span><span class="s0">Animator</span><span class="s1">()</span>
+
+        <span class="s2">while </span><span class="s1">(</span><span class="s0">enemyCollider</span><span class="s1">.</span><span class="s0">isColliding</span><span class="s1">()){</span>
+            <span class="s0">spawn</span><span class="s1">()</span>
+        <span class="s1">}</span>
+
+        <span class="s0">hitBox </span><span class="s1">= </span><span class="s0">Rectangle</span><span class="s1">(</span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">x </span><span class="s1">- </span><span class="s0">hitArea</span><span class="s1">, </span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">y </span><span class="s1">- </span><span class="s0">hitArea</span><span class="s1">, </span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">width </span><span class="s1">+ (</span><span class="s0">hitArea </span><span class="s1">* </span><span class="s3">2</span><span class="s1">), </span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">height </span><span class="s1">+ (</span><span class="s0">hitArea </span><span class="s1">* </span><span class="s3">2</span><span class="s1">))</span>
+
+        <span class="s2">if </span><span class="s1">(</span><span class="s0">Random</span><span class="s1">.</span><span class="s0">nextInt</span><span class="s1">(</span><span class="s3">0</span><span class="s1">, </span><span class="s3">1</span><span class="s1">) == </span><span class="s3">1</span><span class="s1">) </span><span class="s0">isLeft </span><span class="s1">= </span><span class="s2">true</span>
+        <span class="s2">else </span><span class="s0">isLeft </span><span class="s1">= </span><span class="s2">false</span>
+
+        <span class="s0">setupAnimations</span><span class="s1">()</span>
+
+        <span class="s0">gameDisplay</span><span class="s1">.</span><span class="s0">background</span><span class="s1">.</span><span class="s0">add</span><span class="s1">(</span><span class="s2">this</span><span class="s1">)</span>
+    <span class="s1">}</span>
+
+    <span class="s2">fun </span><span class="s0">checkForPlayer</span><span class="s1">() {</span>
+        <span class="s2">val </span><span class="s0">aggressionBounds </span><span class="s1">= </span><span class="s0">Rectangle </span><span class="s1">(</span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">x </span><span class="s1">- </span><span class="s0">aggressionDistance</span><span class="s1">, </span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">y </span><span class="s1">- </span><span class="s0">aggressionDistance</span><span class="s1">,  </span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">width </span><span class="s1">+ (</span><span class="s0">aggressionDistance </span><span class="s1">* </span><span class="s3">2</span><span class="s1">), </span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">height </span><span class="s1">+ (</span><span class="s0">aggressionDistance </span><span class="s1">* </span><span class="s3">2</span><span class="s1">))</span>
+        <span class="s0">hitBox </span><span class="s1">= </span><span class="s0">Rectangle</span><span class="s1">(</span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">x </span><span class="s1">- </span><span class="s0">hitArea</span><span class="s1">, </span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">y </span><span class="s1">- </span><span class="s0">hitArea</span><span class="s1">, </span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">width </span><span class="s1">+ (</span><span class="s0">hitArea </span><span class="s1">* </span><span class="s3">2</span><span class="s1">), </span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">height </span><span class="s1">+ (</span><span class="s0">hitArea </span><span class="s1">* </span><span class="s3">2</span><span class="s1">))</span>
+        <span class="s0">isNearPlayer </span><span class="s1">= </span><span class="s0">aggressionBounds</span><span class="s1">.</span><span class="s0">intersects</span><span class="s1">(</span><span class="s0">player</span><span class="s1">.</span><span class="s0">bounds</span><span class="s1">)</span>
+        <span class="s0">canAttack </span><span class="s1">= </span><span class="s0">hitBox</span><span class="s1">.</span><span class="s0">intersects</span><span class="s1">(</span><span class="s0">player</span><span class="s1">.</span><span class="s0">bounds</span><span class="s1">)</span>
+        <span class="s2">if </span><span class="s1">(</span><span class="s0">canAttack</span><span class="s1">) </span><span class="s0">attackTimer</span><span class="s1">.</span><span class="s0">start</span><span class="s1">()</span>
+        <span class="s2">else </span><span class="s0">attackTimer</span><span class="s1">.</span><span class="s0">stop</span><span class="s1">()</span>
+    <span class="s1">}</span>
+
+    <span class="s2">fun </span><span class="s0">moveEnemy</span><span class="s1">() {</span>
+        <span class="s2">if </span><span class="s1">(</span><span class="s0">isNearPlayer</span><span class="s1">) {</span>
+            <span class="s2">val </span><span class="s0">newPosition </span><span class="s1">= </span><span class="s0">bounds</span>
+
+            <span class="s2">val </span><span class="s0">moveDirection </span><span class="s1">= </span><span class="s0">getDirectionToPlayer</span><span class="s1">()</span>
+            <span class="s2">var </span><span class="s0">calculatedMoveSpeed : Int </span><span class="s1">= </span><span class="s0">moveSpeed</span>
+
+            <span class="s2">if </span><span class="s1">(</span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">width </span><span class="s1">!= </span><span class="s3">0 </span><span class="s1">&amp;&amp; </span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">height </span><span class="s1">!= </span><span class="s3">0</span><span class="s1">) {</span>
+                <span class="s2">val </span><span class="s0">moveVector </span><span class="s1">= </span><span class="s0">sqrt</span><span class="s1">((</span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">width</span><span class="s1">.</span><span class="s0">toFloat</span><span class="s1">() * </span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">width</span><span class="s1">.</span><span class="s0">toFloat</span><span class="s1">()) + (</span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">height</span><span class="s1">.</span><span class="s0">toFloat</span><span class="s1">() * </span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">height</span><span class="s1">.</span><span class="s0">toFloat</span><span class="s1">()))</span>
+                <span class="s0">calculatedMoveSpeed </span><span class="s1">= (</span><span class="s0">moveSpeed</span><span class="s1">.</span><span class="s0">toFloat</span><span class="s1">() / </span><span class="s0">moveVector</span><span class="s1">).</span><span class="s0">toInt</span><span class="s1">()</span>
+            <span class="s1">}</span>
+
+            <span class="s2">if </span><span class="s1">(!</span><span class="s0">isColliding</span><span class="s1">) {</span>
+                <span class="s0">newPosition</span><span class="s1">.</span><span class="s0">x </span><span class="s1">+= </span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">width </span><span class="s1">* </span><span class="s0">calculatedMoveSpeed</span>
+                <span class="s0">newPosition</span><span class="s1">.</span><span class="s0">y </span><span class="s1">+= </span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">height </span><span class="s1">* </span><span class="s0">calculatedMoveSpeed</span>
+
+                <span class="s0">bounds </span><span class="s1">= </span><span class="s0">newPosition</span>
+                <span class="s0">enemyCollider</span><span class="s1">.</span><span class="s0">updateCollider</span><span class="s1">(</span><span class="s0">newPosition</span><span class="s1">)</span>
+            <span class="s1">}</span>
+            <span class="s2">else </span><span class="s1">{</span>
+                <span class="s2">val </span><span class="s0">collisionDirection : Dimension </span><span class="s1">= </span><span class="s0">enemyCollider</span><span class="s1">.</span><span class="s0">getCollisionDirection</span><span class="s1">()</span>
+                <span class="s2">if </span><span class="s1">(</span><span class="s0">collisionDirection</span><span class="s1">.</span><span class="s0">width </span><span class="s1">!= </span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">width</span><span class="s1">) </span><span class="s0">newPosition</span><span class="s1">.</span><span class="s0">x </span><span class="s1">+= (</span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">width </span><span class="s1">* </span><span class="s0">moveSpeed</span><span class="s1">)</span>
+                <span class="s2">if </span><span class="s1">(</span><span class="s0">collisionDirection</span><span class="s1">.</span><span class="s0">height </span><span class="s1">!= </span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">height</span><span class="s1">) </span><span class="s0">newPosition</span><span class="s1">.</span><span class="s0">y </span><span class="s1">+= (</span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">height </span><span class="s1">* </span><span class="s0">moveSpeed</span><span class="s1">)</span>
+
+                <span class="s0">bounds </span><span class="s1">= </span><span class="s0">newPosition</span>
+            <span class="s1">}</span>
+
+            <span class="s0">enemyCollider</span><span class="s1">.</span><span class="s0">updateCollider</span><span class="s1">(</span><span class="s0">newPosition</span><span class="s1">)</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s2">fun </span><span class="s0">attack</span><span class="s1">(){</span>
+        <span class="s0">player</span><span class="s1">.</span><span class="s0">hurt</span><span class="s1">()</span>
+        <span class="s0">player</span><span class="s1">.</span><span class="s0">health </span><span class="s1">-= </span><span class="s0">damage</span>
+    <span class="s1">}</span>
+
+    <span class="s2">fun </span><span class="s0">hurt</span><span class="s1">(){</span>
+        <span class="s0">println</span><span class="s1">(</span><span class="s5">&quot;Hurt&quot;</span><span class="s1">)</span>
+        <span class="s2">if </span><span class="s1">(</span><span class="s0">health </span><span class="s1">&lt;= </span><span class="s3">0</span><span class="s1">) {</span>
+            <span class="s0">health </span><span class="s1">= </span><span class="s3">0</span>
+            <span class="s0">die</span><span class="s1">()</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s2">fun </span><span class="s0">enemyCollisionCheck</span><span class="s1">() {</span>
+        <span class="s0">isColliding </span><span class="s1">= </span><span class="s0">enemyCollider</span><span class="s1">.</span><span class="s0">isColliding</span><span class="s1">()</span>
+    <span class="s1">}</span>
+
+    <span class="s0">private </span><span class="s2">fun </span><span class="s0">getDirectionToPlayer</span><span class="s1">() </span><span class="s0">: Dimension </span><span class="s1">{</span>
+        <span class="s2">var </span><span class="s0">direction </span><span class="s1">= </span><span class="s0">Dimension</span><span class="s1">(</span><span class="s3">0</span><span class="s1">, </span><span class="s3">0</span><span class="s1">)</span>
+
+        <span class="s2">if </span><span class="s1">(</span><span class="s0">player</span><span class="s1">.</span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">x </span><span class="s1">&gt;= </span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">x</span><span class="s1">) </span><span class="s0">direction </span><span class="s1">= </span><span class="s0">Dimension</span><span class="s1">(</span><span class="s3">1</span><span class="s1">, </span><span class="s0">direction</span><span class="s1">.</span><span class="s0">height</span><span class="s1">)</span>
+        <span class="s2">if </span><span class="s1">(</span><span class="s0">player</span><span class="s1">.</span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">x </span><span class="s1">&lt;= </span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">x</span><span class="s1">) </span><span class="s0">direction </span><span class="s1">= </span><span class="s0">Dimension</span><span class="s1">(-</span><span class="s3">1</span><span class="s1">, </span><span class="s0">direction</span><span class="s1">.</span><span class="s0">height</span><span class="s1">)</span>
+        <span class="s2">if </span><span class="s1">(</span><span class="s0">player</span><span class="s1">.</span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">y </span><span class="s1">&lt;= </span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">y</span><span class="s1">) </span><span class="s0">direction </span><span class="s1">= </span><span class="s0">Dimension</span><span class="s1">(</span><span class="s0">direction</span><span class="s1">.</span><span class="s0">width</span><span class="s1">, -</span><span class="s3">1</span><span class="s1">)</span>
+        <span class="s2">if </span><span class="s1">(</span><span class="s0">player</span><span class="s1">.</span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">y </span><span class="s1">&gt;= </span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">y</span><span class="s1">) </span><span class="s0">direction </span><span class="s1">= </span><span class="s0">Dimension</span><span class="s1">(</span><span class="s0">direction</span><span class="s1">.</span><span class="s0">width</span><span class="s1">, </span><span class="s3">1</span><span class="s1">)</span>
+
+        <span class="s2">if </span><span class="s1">(</span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">x </span><span class="s1">&gt;= </span><span class="s0">player</span><span class="s1">.</span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">x </span><span class="s1">- </span><span class="s0">aggressionPadding </span><span class="s1">&amp;&amp; </span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">x </span><span class="s1">&lt;= </span><span class="s0">player</span><span class="s1">.</span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">x </span><span class="s1">+ </span><span class="s0">aggressionPadding</span><span class="s1">) </span><span class="s0">direction </span><span class="s1">= </span><span class="s0">Dimension </span><span class="s1">(</span><span class="s3">0</span><span class="s1">, </span><span class="s0">direction</span><span class="s1">.</span><span class="s0">height</span><span class="s1">)</span>
+        <span class="s2">if </span><span class="s1">(</span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">y </span><span class="s1">&gt;= </span><span class="s0">player</span><span class="s1">.</span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">y </span><span class="s1">- </span><span class="s0">aggressionPadding </span><span class="s1">&amp;&amp; </span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">y </span><span class="s1">&lt;= </span><span class="s0">player</span><span class="s1">.</span><span class="s0">bounds</span><span class="s1">.</span><span class="s0">y </span><span class="s1">+ </span><span class="s0">aggressionPadding</span><span class="s1">) </span><span class="s0">direction </span><span class="s1">= </span><span class="s0">Dimension </span><span class="s1">(</span><span class="s0">direction</span><span class="s1">.</span><span class="s0">width</span><span class="s1">, </span><span class="s3">0</span><span class="s1">)</span>
+
+        <span class="s2">return </span><span class="s0">direction</span>
+    <span class="s1">}</span>
+
+    <span class="s0">private </span><span class="s2">fun </span><span class="s0">setupAnimations</span><span class="s1">() {</span>
+        <span class="s2">val </span><span class="s0">paths </span><span class="s1">= </span><span class="s0">mutableListOf</span><span class="s1">&lt;</span><span class="s0">String</span><span class="s1">&gt;()</span>
+
+        <span class="s0">paths</span><span class="s1">.</span><span class="s0">addAll</span><span class="s1">(</span><span class="s0">listOf</span><span class="s1">(</span><span class="s5">&quot;src/Animations/Enemy_Idle/frame_0.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Enemy_Idle/frame_1.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Enemy_Idle/frame_2.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Enemy_Idle/frame_3.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Enemy_Idle/frame_4.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Enemy_Idle/frame_5.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Enemy_Idle/frame_6.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Enemy_Idle/frame_7.png&quot;</span><span class="s1">,))</span>
+        <span class="s0">idleAnimation </span><span class="s1">= </span><span class="s0">Animation</span><span class="s1">(</span><span class="s0">paths</span><span class="s1">, </span><span class="s3">5</span><span class="s1">, </span><span class="s0">bounds</span><span class="s1">)</span>
+
+        <span class="s0">paths</span><span class="s1">.</span><span class="s0">clear</span><span class="s1">()</span>
+        <span class="s0">paths</span><span class="s1">.</span><span class="s0">addAll</span><span class="s1">(</span><span class="s0">listOf</span><span class="s1">(</span><span class="s5">&quot;src/Animations/Enemy_Idle_Left/frame_0.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Enemy_Idle_Left/frame_1.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Enemy_Idle_Left/frame_2.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Enemy_Idle_Left/frame_3.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Enemy_Idle_Left/frame_4.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Enemy_Idle_Left/frame_5.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Enemy_Idle_Left/frame_6.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Enemy_Idle_Left/frame_7.png&quot;</span><span class="s1">,))</span>
+        <span class="s0">idleLAnimation </span><span class="s1">= </span><span class="s0">Animation</span><span class="s1">(</span><span class="s0">paths</span><span class="s1">, </span><span class="s3">5</span><span class="s1">, </span><span class="s0">bounds</span><span class="s1">)</span>
+
+        <span class="s0">paths</span><span class="s1">.</span><span class="s0">clear</span><span class="s1">()</span>
+        <span class="s0">paths</span><span class="s1">.</span><span class="s0">addAll</span><span class="s1">(</span><span class="s0">listOf</span><span class="s1">(</span><span class="s5">&quot;src/Animations/Enemy_Run/frame_0.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Enemy_Run/frame_1.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Enemy_Run/frame_2.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Enemy_Run/frame_3.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Enemy_Run/frame_4.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Enemy_Run/frame_5.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Enemy_Run/frame_6.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Enemy_Run/frame_7.png&quot;</span><span class="s1">,))</span>
+        <span class="s0">runAnimation </span><span class="s1">= </span><span class="s0">Animation</span><span class="s1">(</span><span class="s0">paths</span><span class="s1">, </span><span class="s3">5</span><span class="s1">, </span><span class="s0">bounds</span><span class="s1">)</span>
+
+        <span class="s0">paths</span><span class="s1">.</span><span class="s0">clear</span><span class="s1">()</span>
+        <span class="s0">paths</span><span class="s1">.</span><span class="s0">addAll</span><span class="s1">(</span><span class="s0">listOf</span><span class="s1">(</span><span class="s5">&quot;src/Animations/Enemy_Run_Left/frame_0.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Enemy_Run_Left/frame_1.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Enemy_Run_Left/frame_2.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Enemy_Run_Left/frame_3.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Enemy_Run_Left/frame_4.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Enemy_Run_Left/frame_5.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Enemy_Run_Left/frame_6.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Enemy_Run_Left/frame_7.png&quot;</span><span class="s1">,))</span>
+        <span class="s0">runLAnimation </span><span class="s1">= </span><span class="s0">Animation</span><span class="s1">(</span><span class="s0">paths</span><span class="s1">, </span><span class="s3">5</span><span class="s1">, </span><span class="s0">bounds</span><span class="s1">)</span>
+
+        <span class="s0">paths</span><span class="s1">.</span><span class="s0">clear</span><span class="s1">()</span>
+        <span class="s0">paths</span><span class="s1">.</span><span class="s0">addAll</span><span class="s1">(</span><span class="s0">listOf</span><span class="s1">(</span><span class="s5">&quot;src/Animations/Attack/frame_1.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Attack/frame_2.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Attack/frame_3.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Attack/frame_4.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Attack/frame_5.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Attack/frame_6.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Attack/frame_7.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Attack/frame_8.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Attack/frame_9.png&quot;</span><span class="s1">))</span>
+        <span class="s0">attackAnimation </span><span class="s1">= </span><span class="s0">Animation</span><span class="s1">(</span><span class="s0">paths</span><span class="s1">, </span><span class="s3">10</span><span class="s1">, </span><span class="s0">Rectangle</span><span class="s1">(</span><span class="s3">0</span><span class="s1">, </span><span class="s3">0</span><span class="s1">, </span><span class="s3">41</span><span class="s1">, </span><span class="s3">40</span><span class="s1">))</span>
+
+        <span class="s0">paths</span><span class="s1">.</span><span class="s0">clear</span><span class="s1">()</span>
+        <span class="s0">paths</span><span class="s1">.</span><span class="s0">addAll</span><span class="s1">(</span><span class="s0">listOf</span><span class="s1">(</span><span class="s5">&quot;src/Animations/Attack_Left/frame_1.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Attack_Left/frame_2.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Attack_Left/frame_3.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Attack_Left/frame_4.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Attack_Left/frame_5.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Attack_Left/frame_6.png&quot;</span><span class="s1">,</span>
+            <span class="s5">&quot;src/Animations/Attack_Left/frame_7.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Attack_Left/frame_8.png&quot;</span><span class="s1">, </span><span class="s5">&quot;src/Animations/Attack_Left/frame_9.png&quot;</span><span class="s1">))</span>
+        <span class="s0">attackLAnimation </span><span class="s1">= </span><span class="s0">Animation</span><span class="s1">(</span><span class="s0">paths</span><span class="s1">, </span><span class="s3">10</span><span class="s1">, </span><span class="s0">Rectangle</span><span class="s1">(</span><span class="s3">0</span><span class="s1">, </span><span class="s3">0</span><span class="s1">, </span><span class="s3">41</span><span class="s1">, </span><span class="s3">40</span><span class="s1">))</span>
+
+        <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">setAnimation</span><span class="s1">(</span><span class="s0">idleAnimation</span><span class="s1">)</span>
+        <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">loop </span><span class="s1">= </span><span class="s2">true</span>
+        <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">playAnimation</span><span class="s1">()</span>
+    <span class="s1">}</span>
+
+    <span class="s2">fun </span><span class="s0">animateEnemy</span><span class="s1">() {</span>
+        <span class="s2">if </span><span class="s1">(</span><span class="s0">isNearPlayer</span><span class="s1">){</span>
+            <span class="s2">val </span><span class="s0">moveDirection </span><span class="s1">= </span><span class="s0">getDirectionToPlayer</span><span class="s1">()</span>
+
+            <span class="s2">if </span><span class="s1">(</span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">width </span><span class="s1">&gt; </span><span class="s3">0</span><span class="s1">) </span><span class="s0">isLeft </span><span class="s1">= </span><span class="s2">false</span>
+            <span class="s2">else if </span><span class="s1">(</span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">width </span><span class="s1">&lt; </span><span class="s3">0</span><span class="s1">) </span><span class="s0">isLeft </span><span class="s1">= </span><span class="s2">true</span>
+
+            <span class="s2">if </span><span class="s1">(!</span><span class="s0">isColliding</span><span class="s1">) {</span>
+                <span class="s2">if </span><span class="s1">(</span><span class="s0">isLeft</span><span class="s1">) {</span>
+                    <span class="s2">if </span><span class="s1">(</span><span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">getCurrentAnimation</span><span class="s1">() != </span><span class="s0">runLAnimation</span><span class="s1">) {</span>
+                        <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">setAnimation</span><span class="s1">(</span><span class="s0">runLAnimation</span><span class="s1">)</span>
+                        <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">playAnimation</span><span class="s1">()</span>
+                    <span class="s1">}</span>
+                <span class="s1">}</span>
+                <span class="s2">else </span><span class="s1">{</span>
+                    <span class="s2">if </span><span class="s1">(</span><span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">getCurrentAnimation</span><span class="s1">() != </span><span class="s0">runAnimation</span><span class="s1">) {</span>
+                        <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">setAnimation</span><span class="s1">(</span><span class="s0">runAnimation</span><span class="s1">)</span>
+                        <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">playAnimation</span><span class="s1">()</span>
+                    <span class="s1">}</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+            <span class="s2">else </span><span class="s1">{</span>
+                <span class="s2">val </span><span class="s0">collisionDirection </span><span class="s1">= </span><span class="s0">enemyCollider</span><span class="s1">.</span><span class="s0">getCollisionDirection</span><span class="s1">()</span>
+
+                <span class="s2">if </span><span class="s1">(</span><span class="s0">collisionDirection</span><span class="s1">.</span><span class="s0">width </span><span class="s1">!= </span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">width </span><span class="s1">|| </span><span class="s0">collisionDirection</span><span class="s1">.</span><span class="s0">height </span><span class="s1">!= </span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">height</span><span class="s1">) {</span>
+                    <span class="s2">if </span><span class="s1">(</span><span class="s0">isLeft</span><span class="s1">) {</span>
+                        <span class="s2">if </span><span class="s1">(</span><span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">getCurrentAnimation</span><span class="s1">() != </span><span class="s0">runLAnimation</span><span class="s1">) {</span>
+                            <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">setAnimation</span><span class="s1">(</span><span class="s0">runLAnimation</span><span class="s1">)</span>
+                            <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">playAnimation</span><span class="s1">()</span>
+                        <span class="s1">}</span>
+                    <span class="s1">}</span>
+                    <span class="s2">else </span><span class="s1">{</span>
+                        <span class="s2">if </span><span class="s1">(</span><span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">getCurrentAnimation</span><span class="s1">() != </span><span class="s0">runAnimation</span><span class="s1">) {</span>
+                            <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">setAnimation</span><span class="s1">(</span><span class="s0">runAnimation</span><span class="s1">)</span>
+                            <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">playAnimation</span><span class="s1">()</span>
+                        <span class="s1">}</span>
+                    <span class="s1">}</span>
+                <span class="s1">}</span>
+                <span class="s2">else if </span><span class="s1">(</span><span class="s0">collisionDirection</span><span class="s1">.</span><span class="s0">width </span><span class="s1">== </span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">width </span><span class="s1">&amp;&amp; </span><span class="s0">collisionDirection</span><span class="s1">.</span><span class="s0">height </span><span class="s1">== </span><span class="s0">moveDirection</span><span class="s1">.</span><span class="s0">height</span><span class="s1">) {</span>
+                    <span class="s2">if </span><span class="s1">(</span><span class="s0">isLeft</span><span class="s1">) {</span>
+                        <span class="s2">if </span><span class="s1">(</span><span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">getCurrentAnimation</span><span class="s1">() != </span><span class="s0">idleLAnimation</span><span class="s1">) {</span>
+                            <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">setAnimation</span><span class="s1">(</span><span class="s0">idleLAnimation</span><span class="s1">)</span>
+                            <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">playAnimation</span><span class="s1">()</span>
+                        <span class="s1">}</span>
+                    <span class="s1">}</span>
+                    <span class="s2">else </span><span class="s1">{</span>
+                        <span class="s2">if </span><span class="s1">(</span><span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">getCurrentAnimation</span><span class="s1">() != </span><span class="s0">idleAnimation</span><span class="s1">) {</span>
+                            <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">setAnimation</span><span class="s1">(</span><span class="s0">idleAnimation</span><span class="s1">)</span>
+                            <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">playAnimation</span><span class="s1">()</span>
+                        <span class="s1">}</span>
+                    <span class="s1">}</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+        <span class="s2">else </span><span class="s1">{</span>
+            <span class="s2">if </span><span class="s1">(</span><span class="s0">isLeft</span><span class="s1">) {</span>
+                <span class="s2">if </span><span class="s1">(</span><span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">getCurrentAnimation</span><span class="s1">() != </span><span class="s0">idleLAnimation</span><span class="s1">) {</span>
+                    <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">setAnimation</span><span class="s1">(</span><span class="s0">idleLAnimation</span><span class="s1">)</span>
+                    <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">playAnimation</span><span class="s1">()</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+            <span class="s2">else </span><span class="s1">{</span>
+                <span class="s2">if </span><span class="s1">(</span><span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">getCurrentAnimation</span><span class="s1">() != </span><span class="s0">idleAnimation</span><span class="s1">) {</span>
+                    <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">setAnimation</span><span class="s1">(</span><span class="s0">idleAnimation</span><span class="s1">)</span>
+                    <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">playAnimation</span><span class="s1">()</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+
+        <span class="s0">icon </span><span class="s1">= </span><span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">getCurrentFrame</span><span class="s1">()</span>
+    <span class="s1">}</span>
+
+    <span class="s2">fun </span><span class="s0">spawn</span><span class="s1">() {</span>
+        <span class="s2">val </span><span class="s0">spawnArea </span><span class="s1">= </span><span class="s0">Rectangle</span><span class="s1">(</span><span class="s0">enemySpawnPadding</span><span class="s1">, </span><span class="s0">enemySpawnPadding</span><span class="s1">, </span><span class="s0">enemySpawnPadding </span><span class="s1">+ </span><span class="s0">gameDisplay</span><span class="s1">.</span><span class="s0">displayBoundary</span><span class="s1">.</span><span class="s0">width </span><span class="s1">- (</span><span class="s0">enemySpawnPadding </span><span class="s1">* </span><span class="s3">2</span><span class="s1">), </span><span class="s0">enemySpawnPadding </span><span class="s1">+ </span><span class="s0">gameDisplay</span><span class="s1">.</span><span class="s0">displayBoundary</span><span class="s1">.</span><span class="s0">height </span><span class="s1">- (</span><span class="s0">enemySpawnPadding </span><span class="s1">* </span><span class="s3">2</span><span class="s1">))</span>
+        <span class="s2">val </span><span class="s0">xCoordinate </span><span class="s1">= </span><span class="s0">Random</span><span class="s1">.</span><span class="s0">nextInt</span><span class="s1">(</span><span class="s0">spawnArea</span><span class="s1">.</span><span class="s0">x </span><span class="s1">,</span><span class="s0">spawnArea</span><span class="s1">.</span><span class="s0">width</span><span class="s1">)</span>
+        <span class="s2">val </span><span class="s0">yCoordinate </span><span class="s1">= </span><span class="s0">Random</span><span class="s1">.</span><span class="s0">nextInt</span><span class="s1">(</span><span class="s0">spawnArea</span><span class="s1">.</span><span class="s0">y </span><span class="s1">,</span><span class="s0">spawnArea</span><span class="s1">.</span><span class="s0">height</span><span class="s1">)</span>
+
+        <span class="s0">bounds </span><span class="s1">= </span><span class="s0">Rectangle </span><span class="s1">(</span><span class="s0">xCoordinate</span><span class="s1">, </span><span class="s0">yCoordinate</span><span class="s1">, </span><span class="s3">58</span><span class="s1">, </span><span class="s3">60</span><span class="s1">)</span>
+    <span class="s1">}</span>
+
+    <span class="s2">fun </span><span class="s0">die</span><span class="s1">(){</span>
+        <span class="s0">isDead </span><span class="s1">= </span><span class="s2">true</span>
+        <span class="s0">attackTimer</span><span class="s1">.</span><span class="s0">stop</span><span class="s1">()</span>
+        <span class="s2">this</span><span class="s1">.</span><span class="s0">isVisible </span><span class="s1">= </span><span class="s2">false</span>
+        <span class="s0">enemyCollider</span><span class="s1">.</span><span class="s0">destroyCollider</span><span class="s1">()</span>
+        <span class="s0">enemyAnimator</span><span class="s1">.</span><span class="s0">stopAnimation</span><span class="s1">()</span>
+        <span class="s0">gameDisplay</span><span class="s1">.</span><span class="s0">background</span><span class="s1">.</span><span class="s0">remove</span><span class="s1">(</span><span class="s2">this</span><span class="s1">)</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

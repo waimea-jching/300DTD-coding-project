@@ -1,8 +1,10 @@
 import java.awt.Dimension
 import java.awt.Rectangle
+import java.awt.event.ActionListener
 import javax.swing.JLabel
 import kotlin.math.sqrt
 import kotlin.random.Random
+import javax.swing.Timer
 
 class Enemy(private val gameDisplay: Display, private val player : Player) : JLabel() {
 
@@ -10,6 +12,18 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
     val enemyCollider : Collider
 
     private val enemySpawnPadding : Int = 27
+
+    //Attacking
+    private var hitBox : Rectangle = Rectangle(0, 0, 0, 0)
+    private val hitArea = 25
+    private val damage : Int = 7
+    private val tps : Int = 1
+    private val attackListener : ActionListener = ActionListener {attack()}
+    private val attackTimer : Timer = Timer(tps * 1000, attackListener)
+
+    //Health
+    var health : Int = 100
+    var isDead = false
 
     private lateinit var idleAnimation : Animation
     private lateinit var idleLAnimation : Animation
@@ -20,28 +34,37 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
     private val aggressionDistance : Int = 120
     private val aggressionPadding : Int = 3
     private var isNearPlayer : Boolean = false
+    private var canAttack : Boolean = false
     private val moveSpeed : Int = 2
     private var isColliding : Boolean = false
 
     init {
         spawn()
 
-        enemyCollider = Collider(bounds, gameDisplay)
+        enemyCollider = Collider(null, this, bounds, gameDisplay)
         enemyAnimator = Animator()
 
         while (enemyCollider.isColliding()){
             spawn()
         }
 
+        hitBox = Rectangle(bounds.x - hitArea, bounds.y - hitArea, bounds.width + (hitArea * 2), bounds.height + (hitArea * 2))
+
         if (Random.nextInt(0, 1) == 1) isLeft = true
         else isLeft = false
 
         setupAnimations()
+
+        gameDisplay.background.add(this)
     }
 
     fun checkForPlayer() {
-        val aggressionBounds = Rectangle (bounds.x - aggressionDistance, bounds.y - aggressionDistance, bounds.x + bounds.width + aggressionDistance, bounds.y + bounds.height + aggressionDistance)
+        val aggressionBounds = Rectangle (bounds.x - aggressionDistance, bounds.y - aggressionDistance,  bounds.width + (aggressionDistance * 2), bounds.height + (aggressionDistance * 2))
+        hitBox = Rectangle(bounds.x - hitArea, bounds.y - hitArea, bounds.width + (hitArea * 2), bounds.height + (hitArea * 2))
         isNearPlayer = aggressionBounds.intersects(player.bounds)
+        canAttack = hitBox.intersects(player.bounds)
+        if (canAttack) attackTimer.start()
+        else attackTimer.stop()
     }
 
     fun moveEnemy() {
@@ -72,6 +95,19 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
             }
 
             enemyCollider.updateCollider(newPosition)
+        }
+    }
+
+    fun attack(){
+        player.health -= damage
+        player.hurt()
+    }
+
+    fun hurt(){
+        println("Hurt")
+        if (health <= 0) {
+            health = 0
+            die()
         }
     }
 
@@ -206,5 +242,14 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
         val yCoordinate = Random.nextInt(spawnArea.y ,spawnArea.height)
 
         bounds = Rectangle (xCoordinate, yCoordinate, 58, 60)
+    }
+
+    fun die(){
+        isDead = true
+        attackTimer.stop()
+        this.isVisible = false
+        enemyCollider.destroyCollider()
+        enemyAnimator.stopAnimation()
+        gameDisplay.background.remove(this)
     }
 }

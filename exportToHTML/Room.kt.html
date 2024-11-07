@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>Room.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #cf8e6d;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Room.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">//=============================================================================================</span>
+
+
+<span class="s1">import javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.</span><span class="s1">JLabel</span>
+
+
+<span class="s0">//=============================================================================================</span>
+
+<span class="s3">class </span><span class="s1">Room</span><span class="s2">(</span><span class="s1">private </span><span class="s3">val </span><span class="s1">gameDisplay: Display</span><span class="s2">) {</span>
+    <span class="s3">val </span><span class="s1">enemys </span><span class="s2">= </span><span class="s1">mutableListOf</span><span class="s2">&lt;</span><span class="s1">Enemy</span><span class="s2">&gt;()</span>
+
+    <span class="s3">fun </span><span class="s1">loadRoom</span><span class="s2">() {</span>
+
+        <span class="s3">for </span><span class="s2">(</span><span class="s1">enemy </span><span class="s3">in </span><span class="s1">enemys</span><span class="s2">) {</span>
+            <span class="s1">gameDisplay</span><span class="s2">.</span><span class="s1">background</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">)</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">deloadRoom</span><span class="s2">() {</span>
+        <span class="s3">for </span><span class="s2">(</span><span class="s1">enemy </span><span class="s3">in </span><span class="s1">enemys</span><span class="s2">) {</span>
+            <span class="s1">enemy</span><span class="s2">.</span><span class="s1">isVisible </span><span class="s2">= </span><span class="s3">false</span>
+            <span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyAnimator</span><span class="s2">.</span><span class="s1">stopAnimation</span><span class="s2">()</span>
+            <span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyCollider</span><span class="s2">.</span><span class="s1">destroyCollider</span><span class="s2">()</span>
+            <span class="s1">gameDisplay</span><span class="s2">.</span><span class="s1">background</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">)</span>
+            <span class="s1">enemy</span><span class="s2">.</span><span class="s1">isDead </span><span class="s2">= </span><span class="s3">true</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">updateRoom</span><span class="s2">() {</span>
+        <span class="s3">for </span><span class="s2">(</span><span class="s1">enemy </span><span class="s3">in </span><span class="s1">enemys</span><span class="s2">) {</span>
+            <span class="s3">if </span><span class="s2">(!</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">isDead</span><span class="s2">) {</span>
+                <span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyCollisionCheck</span><span class="s2">()</span>
+                <span class="s1">enemy</span><span class="s2">.</span><span class="s1">checkForPlayer</span><span class="s2">()</span>
+                <span class="s1">enemy</span><span class="s2">.</span><span class="s1">animateEnemy</span><span class="s2">()</span>
+                <span class="s1">enemy</span><span class="s2">.</span><span class="s1">moveEnemy</span><span class="s2">()</span>
+            <span class="s2">}</span>
+            <span class="s3">else </span><span class="s2">{</span>
+                <span class="s1">enemys</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">)</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">addEnemy</span><span class="s2">(</span><span class="s1">player : Player</span><span class="s2">) {</span>
+        <span class="s3">val </span><span class="s1">enemy </span><span class="s2">= </span><span class="s1">Enemy</span><span class="s2">(</span><span class="s1">gameDisplay</span><span class="s2">, </span><span class="s1">player</span><span class="s2">)</span>
+        <span class="s1">enemys</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">)</span>
+    <span class="s2">}</span>
+<span class="s2">}</span></pre>
+</body>
+</html>

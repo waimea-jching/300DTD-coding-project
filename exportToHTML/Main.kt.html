@@ -1,0 +1,141 @@
+<html>
+<head>
+<title>Main.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #5f826b; font-style: italic;}
+.s4 { color: #cf8e6d;}
+.s5 { color: #2aacb8;}
+.s6 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Main.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">//=============================================================================================</span>
+
+
+<span class="s1">import com</span><span class="s2">.</span><span class="s1">formdev</span><span class="s2">.</span><span class="s1">flatlaf</span><span class="s2">.</span><span class="s1">FlatDarkLaf</span>
+<span class="s1">import java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.*</span>
+<span class="s1">import javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.</span><span class="s1">ImageIcon</span>
+<span class="s1">import javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.</span><span class="s1">JLabel</span>
+<span class="s1">import kotlin</span><span class="s2">.</span><span class="s1">random</span><span class="s2">.</span><span class="s1">Random</span>
+
+
+<span class="s0">//=============================================================================================</span>
+
+
+<span class="s3">/**</span>
+ <span class="s3">* ------------------------------------------------------------------------</span>
+ <span class="s3">* Dungeon Knight</span>
+ <span class="s3">* Level 3 programming project</span>
+ <span class="s3">*</span>
+ <span class="s3">* by Josiah Ching</span>
+ <span class="s3">*</span>
+ <span class="s3">* BRIEF PROJECT DESCRIPTION HERE</span>
+ <span class="s3">* BRIEF PROJECT DESCRIPTION HERE</span>
+ <span class="s3">* BRIEF PROJECT DESCRIPTION HERE</span>
+ <span class="s3">* ------------------------------------------------------------------------</span>
+ <span class="s3">*/</span>
+
+<span class="s0">//Displays</span>
+<span class="s1">lateinit </span><span class="s4">var </span><span class="s1">gameDisplay : Display</span>
+<span class="s1">lateinit </span><span class="s4">var </span><span class="s1">background : JLabel</span>
+
+<span class="s0">//Enemys</span>
+<span class="s4">val </span><span class="s1">enemys </span><span class="s2">= </span><span class="s1">mutableListOf</span><span class="s2">&lt;</span><span class="s1">Enemy</span><span class="s2">&gt;()</span>
+<span class="s4">var </span><span class="s1">waveNumber </span><span class="s2">= </span><span class="s5">1</span>
+
+<span class="s0">//Player Instance</span>
+<span class="s1">lateinit </span><span class="s4">var </span><span class="s1">player : Player</span>
+
+<span class="s4">fun </span><span class="s1">main</span><span class="s2">(){</span>
+    <span class="s1">awake</span><span class="s2">()</span>
+<span class="s2">}</span>
+
+<span class="s4">fun </span><span class="s1">awake</span><span class="s2">(){</span>
+    <span class="s0">//Flat, Dark look</span>
+    <span class="s1">FlatDarkLaf</span><span class="s2">.</span><span class="s1">setup</span><span class="s2">()</span>
+
+    <span class="s0">//Load background Icon</span>
+    <span class="s4">var </span><span class="s1">backgroundImage </span><span class="s2">= </span><span class="s1">ImageIcon</span><span class="s2">(</span><span class="s6">&quot;src/images/gridBackground.png&quot;</span><span class="s2">).</span><span class="s1">image</span>
+    <span class="s1">backgroundImage </span><span class="s2">= </span><span class="s1">backgroundImage</span><span class="s2">.</span><span class="s1">getScaledInstance</span><span class="s2">(</span><span class="s5">800</span><span class="s2">, </span><span class="s5">600</span><span class="s2">, </span><span class="s1">Image</span><span class="s2">.</span><span class="s1">SCALE_SMOOTH</span><span class="s2">)</span>
+    <span class="s4">val </span><span class="s1">backgroundIcon </span><span class="s2">= </span><span class="s1">ImageIcon</span><span class="s2">(</span><span class="s1">backgroundImage</span><span class="s2">)</span>
+
+    <span class="s0">//Create displays</span>
+    <span class="s1">gameDisplay </span><span class="s2">= </span><span class="s1">Display</span><span class="s2">(</span><span class="s6">&quot;Dungeon Knight&quot;</span><span class="s2">, </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s5">800</span><span class="s2">, </span><span class="s5">600</span><span class="s2">), </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s5">800</span><span class="s2">,</span><span class="s5">600</span><span class="s2">))</span>
+
+    <span class="s0">//Create Background</span>
+    <span class="s1">background </span><span class="s2">= </span><span class="s1">JLabel</span><span class="s2">()</span>
+    <span class="s1">background</span><span class="s2">.</span><span class="s1">bounds </span><span class="s2">= </span><span class="s1">Rectangle</span><span class="s2">(</span><span class="s5">0</span><span class="s2">, </span><span class="s5">0</span><span class="s2">, </span><span class="s5">800</span><span class="s2">, </span><span class="s5">600</span><span class="s2">)</span>
+    <span class="s1">background</span><span class="s2">.</span><span class="s1">icon </span><span class="s2">= </span><span class="s1">backgroundIcon</span>
+    <span class="s1">gameDisplay</span><span class="s2">.</span><span class="s1">background </span><span class="s2">= </span><span class="s1">background</span>
+    <span class="s1">gameDisplay</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">background</span><span class="s2">)</span>
+
+    <span class="s0">//Instantiate Player &amp; Allow to Read Input</span>
+    <span class="s1">player </span><span class="s2">= </span><span class="s1">Player</span><span class="s2">(</span><span class="s1">gameDisplay</span><span class="s2">)</span>
+    <span class="s1">background</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">player</span><span class="s2">)</span>
+
+    <span class="s1">addEnemys</span><span class="s2">()</span>
+
+    <span class="s0">//Start Timers &amp; enable input</span>
+    <span class="s1">KeyboardFocusManager</span><span class="s2">.</span><span class="s1">getCurrentKeyboardFocusManager</span><span class="s2">().</span><span class="s1">addKeyEventDispatcher</span><span class="s2">(</span><span class="s1">player</span><span class="s2">)</span>
+    <span class="s1">setupTimers</span><span class="s2">()</span>
+<span class="s2">}</span>
+
+<span class="s4">fun </span><span class="s1">update</span><span class="s2">(){</span>
+    <span class="s1">player</span><span class="s2">.</span><span class="s1">playerCollisionCheck</span><span class="s2">()</span>
+    <span class="s1">player</span><span class="s2">.</span><span class="s1">animatePlayer</span><span class="s2">()</span>
+    <span class="s1">player</span><span class="s2">.</span><span class="s1">movePlayer</span><span class="s2">()</span>
+
+    <span class="s4">var </span><span class="s1">enemyCounter </span><span class="s2">= </span><span class="s5">0</span>
+    <span class="s4">for </span><span class="s2">(</span><span class="s1">enemy </span><span class="s4">in </span><span class="s1">enemys</span><span class="s2">) {</span>
+        <span class="s4">if </span><span class="s2">(!</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">isDead</span><span class="s2">) {</span>
+            <span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyCollisionCheck</span><span class="s2">()</span>
+            <span class="s1">enemy</span><span class="s2">.</span><span class="s1">checkForPlayer</span><span class="s2">()</span>
+            <span class="s1">enemy</span><span class="s2">.</span><span class="s1">animateEnemy</span><span class="s2">()</span>
+            <span class="s1">enemy</span><span class="s2">.</span><span class="s1">moveEnemy</span><span class="s2">()</span>
+        <span class="s2">}</span>
+        <span class="s4">else</span><span class="s2">{</span>
+            <span class="s1">enemyCounter </span><span class="s2">++</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+    <span class="s4">if </span><span class="s2">(</span><span class="s1">enemyCounter </span><span class="s2">== </span><span class="s1">enemys</span><span class="s2">.</span><span class="s1">count</span><span class="s2">()){</span>
+        <span class="s1">nextWave</span><span class="s2">()</span>
+    <span class="s2">}</span>
+
+    <span class="s4">if </span><span class="s2">(</span><span class="s1">player</span><span class="s2">.</span><span class="s1">isDead</span><span class="s2">) </span><span class="s1">playerDied</span><span class="s2">()</span>
+<span class="s2">}</span>
+
+<span class="s4">fun </span><span class="s1">addEnemys</span><span class="s2">(){</span>
+<span class="s0">//    val numberOfEnemys = Random.nextInt(waveNumber ,waveNumber + 2)</span>
+    <span class="s4">val </span><span class="s1">numberOfEnemys </span><span class="s2">= </span><span class="s5">2</span>
+    <span class="s1">repeat</span><span class="s2">(</span><span class="s1">numberOfEnemys</span><span class="s2">){</span>
+        <span class="s1">enemys</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">Enemy</span><span class="s2">(</span><span class="s1">gameDisplay</span><span class="s2">, </span><span class="s1">player</span><span class="s2">))</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+
+<span class="s4">fun </span><span class="s1">nextWave</span><span class="s2">(){</span>
+    <span class="s1">waveNumber</span><span class="s2">++</span>
+    <span class="s1">enemys</span><span class="s2">.</span><span class="s1">clear</span><span class="s2">()</span>
+    <span class="s1">addEnemys</span><span class="s2">()</span>
+<span class="s2">}</span>
+
+<span class="s4">fun </span><span class="s1">playerDied</span><span class="s2">() {</span>
+    <span class="s1">updateTimer</span><span class="s2">.</span><span class="s1">stop</span><span class="s2">()</span>
+<span class="s2">}</span>
+
+
+
+
+
+
+</pre>
+</body>
+</html>

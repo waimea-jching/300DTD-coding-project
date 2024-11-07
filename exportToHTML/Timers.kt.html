@@ -1,0 +1,48 @@
+<html>
+<head>
+<title>Timers.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #cf8e6d;}
+.s4 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Timers.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">//=============================================================================================</span>
+
+
+<span class="s1">import java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.</span><span class="s1">ActionListener</span>
+<span class="s1">import javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.</span><span class="s1">Timer</span>
+
+
+<span class="s0">//=============================================================================================</span>
+
+
+<span class="s0">//Timer Speeds</span>
+<span class="s1">private const </span><span class="s3">val </span><span class="s1">frameRate : Int </span><span class="s2">= </span><span class="s4">30 </span><span class="s0">/*ticks per second*/</span>
+
+<span class="s0">//Timers</span>
+<span class="s1">lateinit </span><span class="s3">var </span><span class="s1">updateTimer: Timer</span>
+
+<span class="s3">fun </span><span class="s1">setupTimers</span><span class="s2">() {</span>
+    <span class="s3">val </span><span class="s1">updateListener </span><span class="s2">= </span><span class="s1">ActionListener </span><span class="s2">{</span>
+        <span class="s1">update</span><span class="s2">()</span>
+    <span class="s2">}</span>
+    <span class="s1">updateTimer </span><span class="s2">= </span><span class="s1">Timer</span><span class="s2">((</span><span class="s4">1000</span><span class="s2">/ </span><span class="s1">frameRate</span><span class="s2">), </span><span class="s1">updateListener</span><span class="s2">)</span>
+    <span class="s1">updateTimer</span><span class="s2">.</span><span class="s1">start</span><span class="s2">()</span>
+<span class="s2">}</span>
+
+<span class="s3">fun </span><span class="s1">stopTimers</span><span class="s2">() {</span>
+    <span class="s1">updateTimer</span><span class="s2">.</span><span class="s1">stop</span><span class="s2">()</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

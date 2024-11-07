@@ -1,0 +1,93 @@
+<html>
+<head>
+<title>Animator.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #cf8e6d;}
+.s4 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Animator.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">//=============================================================================================</span>
+
+
+<span class="s1">import java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.</span><span class="s1">ActionListener</span>
+<span class="s1">import javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.</span><span class="s1">ImageIcon</span>
+<span class="s1">import javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.</span><span class="s1">Timer</span>
+
+
+<span class="s0">//=============================================================================================</span>
+
+
+<span class="s3">class </span><span class="s1">Animator</span><span class="s2">() {</span>
+    <span class="s0">//animation class</span>
+    <span class="s1">private lateinit </span><span class="s3">var </span><span class="s1">currentAnimation : Animation</span>
+    <span class="s1">private </span><span class="s3">var </span><span class="s1">currentAnimationFrame : ImageIcon </span><span class="s2">= </span><span class="s1">ImageIcon</span><span class="s2">()</span>
+    <span class="s1">private </span><span class="s3">var </span><span class="s1">animationIndex: Int </span><span class="s2">= </span><span class="s4">0</span>
+
+    <span class="s0">//other</span>
+    <span class="s1">private </span><span class="s3">var </span><span class="s1">animationSpeed : Int </span><span class="s2">= </span><span class="s4">0</span>
+    <span class="s3">var </span><span class="s1">loop : Boolean </span><span class="s2">= </span><span class="s3">true</span>
+
+    <span class="s1">private lateinit </span><span class="s3">var </span><span class="s1">animationTimer: Timer</span>
+    <span class="s1">private </span><span class="s3">val </span><span class="s1">animationListener : ActionListener </span><span class="s2">= </span><span class="s1">ActionListener </span><span class="s2">{</span><span class="s1">updateAnimation</span><span class="s2">()}</span>
+
+    <span class="s1">init </span><span class="s2">{</span>
+        <span class="s1">animationTimer </span><span class="s2">= </span><span class="s1">Timer</span><span class="s2">(</span><span class="s4">0</span><span class="s2">, </span><span class="s1">animationListener</span><span class="s2">)</span>
+    <span class="s2">}</span>
+
+    <span class="s1">private </span><span class="s3">fun </span><span class="s1">updateAnimation</span><span class="s2">() {</span>
+        <span class="s0">//playing through selected animations frames either</span>
+        <span class="s0">// in a loop or just once</span>
+        <span class="s3">if </span><span class="s2">(</span><span class="s1">loop</span><span class="s2">) {</span>
+            <span class="s3">if </span><span class="s2">(</span><span class="s1">animationIndex </span><span class="s2">&gt;= </span><span class="s1">currentAnimation</span><span class="s2">.</span><span class="s1">frames</span><span class="s2">.</span><span class="s1">count</span><span class="s2">()) </span><span class="s1">animationIndex </span><span class="s2">= </span><span class="s4">0</span>
+            <span class="s1">currentAnimationFrame </span><span class="s2">= </span><span class="s1">currentAnimation</span><span class="s2">.</span><span class="s1">frames</span><span class="s2">[</span><span class="s1">animationIndex</span><span class="s2">]</span>
+            <span class="s1">animationIndex</span><span class="s2">++</span>
+        <span class="s2">}</span>
+        <span class="s3">else </span><span class="s2">{</span>
+            <span class="s3">if </span><span class="s2">(</span><span class="s1">animationIndex </span><span class="s2">== </span><span class="s1">currentAnimation</span><span class="s2">.</span><span class="s1">frames</span><span class="s2">.</span><span class="s1">count</span><span class="s2">()-</span><span class="s4">1</span><span class="s2">) </span><span class="s1">stopAnimation</span><span class="s2">()</span>
+            <span class="s1">currentAnimationFrame </span><span class="s2">= </span><span class="s1">currentAnimation</span><span class="s2">.</span><span class="s1">frames</span><span class="s2">[</span><span class="s1">animationIndex</span><span class="s2">]</span>
+            <span class="s1">animationIndex</span><span class="s2">++</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">getCurrentFrame</span><span class="s2">()</span><span class="s1">: ImageIcon </span><span class="s2">{</span>
+        <span class="s3">return </span><span class="s1">currentAnimationFrame</span>
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">setAnimation</span><span class="s2">(</span><span class="s1">animation: Animation</span><span class="s2">) {</span>
+        <span class="s1">currentAnimation </span><span class="s2">= </span><span class="s1">animation</span>
+        <span class="s1">animationSpeed </span><span class="s2">= </span><span class="s1">animation</span><span class="s2">.</span><span class="s1">animationSpeed</span>
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">getCurrentAnimation</span><span class="s2">() </span><span class="s1">: Animation </span><span class="s2">{</span>
+        <span class="s3">return </span><span class="s1">currentAnimation</span>
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">playAnimation</span><span class="s2">() {</span>
+        <span class="s0">//if looping turned off make sure to start at beginning frame</span>
+        <span class="s0">// in case animation index is set to something else</span>
+        <span class="s3">if </span><span class="s2">(!</span><span class="s1">loop</span><span class="s2">) </span><span class="s1">animationIndex </span><span class="s2">= </span><span class="s4">0</span>
+
+        <span class="s3">if </span><span class="s2">(</span><span class="s1">animationTimer</span><span class="s2">.</span><span class="s1">isRunning</span><span class="s2">) </span><span class="s1">stopAnimation</span><span class="s2">()</span>
+        <span class="s1">animationTimer</span><span class="s2">.</span><span class="s1">removeActionListener</span><span class="s2">(</span><span class="s1">animationListener</span><span class="s2">)</span>
+
+        <span class="s1">animationTimer </span><span class="s2">= </span><span class="s1">Timer</span><span class="s2">((</span><span class="s4">1000</span><span class="s2">/ </span><span class="s1">animationSpeed</span><span class="s2">), </span><span class="s1">animationListener</span><span class="s2">)</span>
+        <span class="s1">updateAnimation</span><span class="s2">()</span>
+        <span class="s1">animationTimer</span><span class="s2">.</span><span class="s1">start</span><span class="s2">()</span>
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">stopAnimation</span><span class="s2">() {</span>
+        <span class="s1">animationTimer</span><span class="s2">.</span><span class="s1">stop</span><span class="s2">()</span>
+    <span class="s2">}</span>
+<span class="s2">}</span></pre>
+</body>
+</html>

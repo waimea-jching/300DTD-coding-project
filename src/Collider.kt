@@ -9,13 +9,13 @@ import kotlin.math.abs
 //=============================================================================================
 
 
-class Collider(private var bounds : Rectangle, private val gameDisplay: Display){
+class Collider(var classPlayer : Player?, var classEnemy: Enemy?, private var bounds : Rectangle, private val gameDisplay: Display){
 
     private val displayBoundary : Dimension = gameDisplay.displayBoundary
     private var collisionBodys = mutableListOf<Rectangle>()
 
     companion object {
-        val globalColliders = mutableListOf<Collider>()
+        public val globalColliders = mutableListOf<Collider>()
     }
 
     init {
@@ -54,6 +54,24 @@ class Collider(private var bounds : Rectangle, private val gameDisplay: Display)
         if ((bounds.y + bounds.height) >= displayBoundary.height)  isColliding = true
 
         return isColliding
+    }
+
+    fun getCustomCollision(hitBox : Rectangle) : MutableList<Collider> {
+        val hits = mutableListOf<Collider>()
+
+        for (collider in globalColliders){
+            if (collider != this){
+                if (hitBox.intersects(collider.bounds)) {
+                    if (!hits.contains(collider)) hits.add(collider)
+                    break
+                }
+                else {
+                    if (hits.contains(collider)) hits.remove(collider)
+                }
+            }
+        }
+
+        return hits
     }
 
     fun getCollisionDirection() : Dimension{

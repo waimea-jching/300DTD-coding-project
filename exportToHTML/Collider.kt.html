@@ -1,0 +1,139 @@
+<html>
+<head>
+<title>Collider.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #cf8e6d;}
+.s4 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Collider.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">//=============================================================================================</span>
+
+
+<span class="s1">import java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">Dimension</span>
+<span class="s1">import java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">Rectangle</span>
+<span class="s1">import kotlin</span><span class="s2">.</span><span class="s1">math</span><span class="s2">.</span><span class="s1">abs</span>
+
+
+<span class="s0">//=============================================================================================</span>
+
+
+<span class="s3">class </span><span class="s1">Collider</span><span class="s2">(</span><span class="s3">var </span><span class="s1">classPlayer : Player?</span><span class="s2">, </span><span class="s3">var </span><span class="s1">classEnemy: Enemy?</span><span class="s2">, </span><span class="s1">private </span><span class="s3">var </span><span class="s1">bounds : Rectangle</span><span class="s2">, </span><span class="s1">private </span><span class="s3">val </span><span class="s1">gameDisplay: Display</span><span class="s2">){</span>
+
+    <span class="s1">private </span><span class="s3">val </span><span class="s1">displayBoundary : Dimension </span><span class="s2">= </span><span class="s1">gameDisplay</span><span class="s2">.</span><span class="s1">displayBoundary</span>
+    <span class="s1">private </span><span class="s3">var </span><span class="s1">collisionBodys </span><span class="s2">= </span><span class="s1">mutableListOf</span><span class="s2">&lt;</span><span class="s1">Rectangle</span><span class="s2">&gt;()</span>
+
+    <span class="s1">companion </span><span class="s3">object </span><span class="s2">{</span>
+        <span class="s1">public </span><span class="s3">val </span><span class="s1">globalColliders </span><span class="s2">= </span><span class="s1">mutableListOf</span><span class="s2">&lt;</span><span class="s1">Collider</span><span class="s2">&gt;()</span>
+    <span class="s2">}</span>
+
+    <span class="s1">init </span><span class="s2">{</span>
+        <span class="s1">globalColliders</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s3">this</span><span class="s2">)</span>
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">updateCollider</span><span class="s2">(</span><span class="s1">newBounds : Rectangle</span><span class="s2">) {</span>
+        <span class="s1">bounds </span><span class="s2">= </span><span class="s1">newBounds</span>
+
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">isColliding</span><span class="s2">() </span><span class="s1">: Boolean</span><span class="s2">{</span>
+        <span class="s3">var </span><span class="s1">isColliding </span><span class="s2">= </span><span class="s3">false</span>
+
+        <span class="s3">val </span><span class="s1">padding </span><span class="s2">= </span><span class="s4">10</span>
+        <span class="s3">val </span><span class="s1">sensitivePadding </span><span class="s2">= </span><span class="s4">13</span>
+        <span class="s3">val </span><span class="s1">paddedBounds </span><span class="s2">= </span><span class="s1">Rectangle</span><span class="s2">(</span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">x </span><span class="s2">- </span><span class="s1">padding</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">y </span><span class="s2">- </span><span class="s1">padding</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">width </span><span class="s2">+ </span><span class="s1">sensitivePadding</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">height </span><span class="s2">+ </span><span class="s1">sensitivePadding</span><span class="s2">)</span>
+
+        <span class="s3">for </span><span class="s2">(</span><span class="s1">collider </span><span class="s3">in </span><span class="s1">globalColliders</span><span class="s2">){</span>
+            <span class="s3">if </span><span class="s2">(</span><span class="s1">collider </span><span class="s2">!= </span><span class="s3">this</span><span class="s2">){</span>
+                <span class="s3">if </span><span class="s2">(</span><span class="s1">paddedBounds</span><span class="s2">.</span><span class="s1">intersects</span><span class="s2">(</span><span class="s1">collider</span><span class="s2">.</span><span class="s1">bounds</span><span class="s2">)) {</span>
+                    <span class="s1">isColliding </span><span class="s2">= </span><span class="s3">true</span>
+                    <span class="s3">if </span><span class="s2">(!</span><span class="s1">collisionBodys</span><span class="s2">.</span><span class="s1">contains</span><span class="s2">(</span><span class="s1">collider</span><span class="s2">.</span><span class="s1">bounds</span><span class="s2">)) </span><span class="s1">collisionBodys</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">collider</span><span class="s2">.</span><span class="s1">bounds</span><span class="s2">)</span>
+                    <span class="s3">break</span>
+                <span class="s2">}</span>
+                <span class="s3">else </span><span class="s2">{</span>
+                    <span class="s3">if </span><span class="s2">(</span><span class="s1">collisionBodys</span><span class="s2">.</span><span class="s1">contains</span><span class="s2">(</span><span class="s1">collider</span><span class="s2">.</span><span class="s1">bounds</span><span class="s2">)) </span><span class="s1">collisionBodys</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s1">collider</span><span class="s2">.</span><span class="s1">bounds</span><span class="s2">)</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s0">//Checking if object is touching or beyond display boundaries</span>
+        <span class="s3">if </span><span class="s2">(</span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">x </span><span class="s2">&lt;= </span><span class="s4">0</span><span class="s2">) </span><span class="s1">isColliding </span><span class="s2">= </span><span class="s3">true</span>
+        <span class="s3">if </span><span class="s2">(</span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">y </span><span class="s2">&lt;= </span><span class="s4">0</span><span class="s2">) </span><span class="s1">isColliding </span><span class="s2">= </span><span class="s3">true</span>
+        <span class="s3">if </span><span class="s2">((</span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+ </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">width</span><span class="s2">) &gt;= </span><span class="s1">displayBoundary</span><span class="s2">.</span><span class="s1">width</span><span class="s2">)  </span><span class="s1">isColliding </span><span class="s2">= </span><span class="s3">true</span>
+        <span class="s3">if </span><span class="s2">((</span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">y </span><span class="s2">+ </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">height</span><span class="s2">) &gt;= </span><span class="s1">displayBoundary</span><span class="s2">.</span><span class="s1">height</span><span class="s2">)  </span><span class="s1">isColliding </span><span class="s2">= </span><span class="s3">true</span>
+
+        <span class="s3">return </span><span class="s1">isColliding</span>
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">getCustomCollision</span><span class="s2">(</span><span class="s1">hitBox : Rectangle</span><span class="s2">) </span><span class="s1">: MutableList</span><span class="s2">&lt;</span><span class="s1">Collider</span><span class="s2">&gt; {</span>
+        <span class="s3">val </span><span class="s1">hits </span><span class="s2">= </span><span class="s1">mutableListOf</span><span class="s2">&lt;</span><span class="s1">Collider</span><span class="s2">&gt;()</span>
+
+        <span class="s3">for </span><span class="s2">(</span><span class="s1">collider </span><span class="s3">in </span><span class="s1">globalColliders</span><span class="s2">){</span>
+            <span class="s3">if </span><span class="s2">(</span><span class="s1">collider </span><span class="s2">!= </span><span class="s3">this</span><span class="s2">){</span>
+                <span class="s3">if </span><span class="s2">(</span><span class="s1">hitBox</span><span class="s2">.</span><span class="s1">intersects</span><span class="s2">(</span><span class="s1">collider</span><span class="s2">.</span><span class="s1">bounds</span><span class="s2">)) {</span>
+                    <span class="s3">if </span><span class="s2">(!</span><span class="s1">hits</span><span class="s2">.</span><span class="s1">contains</span><span class="s2">(</span><span class="s1">collider</span><span class="s2">)) </span><span class="s1">hits</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">collider</span><span class="s2">)</span>
+                    <span class="s3">break</span>
+                <span class="s2">}</span>
+                <span class="s3">else </span><span class="s2">{</span>
+                    <span class="s3">if </span><span class="s2">(</span><span class="s1">hits</span><span class="s2">.</span><span class="s1">contains</span><span class="s2">(</span><span class="s1">collider</span><span class="s2">)) </span><span class="s1">hits</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s1">collider</span><span class="s2">)</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s3">return </span><span class="s1">hits</span>
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">getCollisionDirection</span><span class="s2">() </span><span class="s1">: Dimension</span><span class="s2">{</span>
+        <span class="s3">var </span><span class="s1">collisionDirection </span><span class="s2">= </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s4">0</span><span class="s2">, </span><span class="s4">0</span><span class="s2">)</span>
+
+        <span class="s3">if </span><span class="s2">(</span><span class="s1">collisionBodys</span><span class="s2">.</span><span class="s1">isNotEmpty</span><span class="s2">()){</span>
+            <span class="s3">for </span><span class="s2">(</span><span class="s1">collision </span><span class="s3">in </span><span class="s1">collisionBodys</span><span class="s2">){</span>
+                <span class="s3">val </span><span class="s1">padding </span><span class="s2">= </span><span class="s4">14</span>
+
+                <span class="s0">//up</span>
+                <span class="s3">var </span><span class="s1">shiftedBounds </span><span class="s2">= </span><span class="s1">Rectangle</span><span class="s2">(</span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">x</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">y </span><span class="s2">- </span><span class="s1">padding</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">width</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">height</span><span class="s2">)</span>
+                <span class="s3">if </span><span class="s2">(</span><span class="s1">shiftedBounds</span><span class="s2">.</span><span class="s1">intersects</span><span class="s2">(</span><span class="s1">collision</span><span class="s2">.</span><span class="s1">bounds</span><span class="s2">)){</span>
+                    <span class="s1">collisionDirection </span><span class="s2">= </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s1">collisionDirection</span><span class="s2">.</span><span class="s1">width</span><span class="s2">, -</span><span class="s4">1</span><span class="s2">)</span>
+                <span class="s2">}</span>
+                <span class="s0">//down</span>
+                <span class="s1">shiftedBounds </span><span class="s2">= </span><span class="s1">Rectangle</span><span class="s2">(</span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">x</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">y </span><span class="s2">+ </span><span class="s1">padding</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">width</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">height</span><span class="s2">)</span>
+                <span class="s3">if </span><span class="s2">(</span><span class="s1">shiftedBounds</span><span class="s2">.</span><span class="s1">intersects</span><span class="s2">(</span><span class="s1">collision</span><span class="s2">.</span><span class="s1">bounds</span><span class="s2">)){</span>
+                    <span class="s1">collisionDirection </span><span class="s2">= </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s1">collisionDirection</span><span class="s2">.</span><span class="s1">width</span><span class="s2">, </span><span class="s4">1</span><span class="s2">)</span>
+                <span class="s2">}</span>
+                <span class="s0">//left</span>
+                <span class="s1">shiftedBounds </span><span class="s2">= </span><span class="s1">Rectangle</span><span class="s2">(</span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">x </span><span class="s2">- </span><span class="s1">padding</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">y</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">width</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">height</span><span class="s2">)</span>
+                <span class="s3">if </span><span class="s2">(</span><span class="s1">shiftedBounds</span><span class="s2">.</span><span class="s1">intersects</span><span class="s2">(</span><span class="s1">collision</span><span class="s2">.</span><span class="s1">bounds</span><span class="s2">)){</span>
+                    <span class="s1">collisionDirection </span><span class="s2">= </span><span class="s1">Dimension</span><span class="s2">(-</span><span class="s4">1</span><span class="s2">,</span><span class="s1">collisionDirection</span><span class="s2">.</span><span class="s1">height</span><span class="s2">)</span>
+                <span class="s2">}</span>
+                <span class="s0">//right</span>
+                <span class="s1">shiftedBounds </span><span class="s2">= </span><span class="s1">Rectangle</span><span class="s2">(</span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+ </span><span class="s1">padding</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">y</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">width</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">height</span><span class="s2">)</span>
+                <span class="s3">if </span><span class="s2">(</span><span class="s1">shiftedBounds</span><span class="s2">.</span><span class="s1">intersects</span><span class="s2">(</span><span class="s1">collision</span><span class="s2">.</span><span class="s1">bounds</span><span class="s2">)){</span>
+                    <span class="s1">collisionDirection </span><span class="s2">= </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s4">1</span><span class="s2">,</span><span class="s1">collisionDirection</span><span class="s2">.</span><span class="s1">height</span><span class="s2">)</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s0">//collision direction against display boundaries</span>
+        <span class="s3">if </span><span class="s2">(</span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">x </span><span class="s2">&lt;= </span><span class="s4">0</span><span class="s2">) </span><span class="s1">collisionDirection </span><span class="s2">= </span><span class="s1">Dimension</span><span class="s2">(-</span><span class="s4">1</span><span class="s2">,</span><span class="s1">collisionDirection</span><span class="s2">.</span><span class="s1">height</span><span class="s2">)</span>
+        <span class="s3">if </span><span class="s2">(</span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">y </span><span class="s2">&lt;= </span><span class="s4">0</span><span class="s2">) </span><span class="s1">collisionDirection </span><span class="s2">= </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s1">collisionDirection</span><span class="s2">.</span><span class="s1">width</span><span class="s2">, -</span><span class="s4">1</span><span class="s2">)</span>
+        <span class="s3">if </span><span class="s2">((</span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+ </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">width</span><span class="s2">) &gt;= </span><span class="s1">displayBoundary</span><span class="s2">.</span><span class="s1">width</span><span class="s2">) </span><span class="s1">collisionDirection </span><span class="s2">= </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s4">1</span><span class="s2">,</span><span class="s1">collisionDirection</span><span class="s2">.</span><span class="s1">height</span><span class="s2">)</span>
+        <span class="s3">if </span><span class="s2">((</span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">y </span><span class="s2">+ </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">height</span><span class="s2">) &gt;= </span><span class="s1">displayBoundary</span><span class="s2">.</span><span class="s1">height</span><span class="s2">) </span><span class="s1">collisionDirection </span><span class="s2">= </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s1">collisionDirection</span><span class="s2">.</span><span class="s1">width</span><span class="s2">, </span><span class="s4">1</span><span class="s2">)</span>
+
+        <span class="s3">return </span><span class="s1">collisionDirection</span>
+    <span class="s2">}</span>
+
+    <span class="s3">fun </span><span class="s1">destroyCollider</span><span class="s2">() {</span>
+        <span class="s1">globalColliders</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s3">this</span><span class="s2">)</span>
+    <span class="s2">}</span>
+<span class="s2">}</span></pre>
+</body>
+</html>

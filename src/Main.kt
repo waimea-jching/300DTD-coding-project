@@ -2,14 +2,10 @@
 
 
 import com.formdev.flatlaf.FlatDarkLaf
-import com.formdev.flatlaf.FlatLaf
 import java.awt.*
 import javax.swing.ImageIcon
-import javax.swing.JButton
 import javax.swing.JLabel
-import javax.swing.SwingConstants
-import kotlin.concurrent.thread
-import kotlin.math.abs
+import kotlin.random.Random
 
 
 //=============================================================================================
@@ -32,11 +28,9 @@ import kotlin.math.abs
 lateinit var gameDisplay : Display
 lateinit var background : JLabel
 
-val testEnemys = mutableListOf<Enemy>()
-
-//Rooms
-lateinit private var currentRoom : Room
-lateinit private var room1 : Room
+//Enemys
+val enemys = mutableListOf<Enemy>()
+var waveNumber = 1
 
 //Player Instance
 lateinit var player : Player
@@ -68,8 +62,7 @@ fun awake(){
     player = Player(gameDisplay)
     background.add(player)
 
-    setupRooms()
-    currentRoom.loadRoom()
+    addEnemys()
 
     //Start Timers & enable input
     KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(player)
@@ -81,17 +74,42 @@ fun update(){
     player.animatePlayer()
     player.movePlayer()
 
-    currentRoom.updateRoom()
-}
-
-private fun setupRooms() {
-    room1 = Room(gameDisplay)
-    repeat(4) {
-        room1.addEnemy(player)
+    var enemyCounter = 0
+    for (enemy in enemys) {
+        if (!enemy.isDead) {
+            enemy.enemyCollisionCheck()
+            enemy.checkForPlayer()
+            enemy.animateEnemy()
+            enemy.moveEnemy()
+        }
+        else{
+            enemyCounter ++
+        }
+    }
+    if (enemyCounter == enemys.count()){
+        nextWave()
     }
 
-    currentRoom = room1
+    if (player.isDead) playerDied()
 }
+
+fun addEnemys(){
+    val numberOfEnemys = Random.nextInt(waveNumber ,waveNumber + 2)
+    repeat(numberOfEnemys){
+        enemys.add(Enemy(gameDisplay, player))
+    }
+}
+
+fun nextWave(){
+    waveNumber++
+    enemys.clear()
+    addEnemys()
+}
+
+fun playerDied() {
+    updateTimer.stop()
+}
+
 
 
 

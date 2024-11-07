@@ -4,8 +4,11 @@
 import java.awt.Dimension
 import java.awt.KeyEventDispatcher
 import java.awt.Rectangle
+import java.awt.event.ActionListener
 import java.awt.event.KeyEvent
+import java.awt.event.MouseEvent
 import javax.swing.JLabel
+import javax.swing.Timer
 import kotlin.math.*
 
 
@@ -22,6 +25,15 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
     private var horizontalInput : Int = 0
     private val moveSpeed : Int = 3
 
+    //Attacking
+    private var hitBox : Rectangle = Rectangle(0, 0, 0, 0)
+    private val hitArea = 40
+    private val damage : Int = 25
+
+    //Health
+    var health : Int = 100
+    var isDead = false
+
     //animation
     private lateinit var idleAnimation : Animation
     private lateinit var runAnimation : Animation
@@ -35,9 +47,11 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
     init {
         //set starting position and size of player here
         bounds = Rectangle(380,280,54,66)
+        hitBox = Rectangle(bounds.x - hitArea, bounds.y - hitArea, bounds.width + (hitArea * 2), bounds.height + (hitArea * 2))
+
 
         //setup components & animations
-        playerCollider = Collider(bounds, gameDisplay)
+        playerCollider = Collider(this, null, bounds, gameDisplay)
         playerAnimator = Animator()
         setUpAnimations()
     }
@@ -159,6 +173,31 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
         //update player collider & add new positioned
         // player to game display
         playerCollider.updateCollider(newPosition)
+        hitBox = Rectangle(bounds.x - hitArea, bounds.y - hitArea, bounds.width + (hitArea * 2), bounds.height + (hitArea * 2))
+    }
+
+    fun attack(){
+        val hits = playerCollider.getCustomCollision(hitBox)
+        if (hits.isNotEmpty()) {
+            for (hit in hits) {
+                if (hit.classPlayer != null){
+                    hit.classPlayer!!.health -= damage
+                    hit.classPlayer!!.hurt()
+                }
+                if (hit.classEnemy != null){
+                    hit.classEnemy!!.health -= damage
+                    hit.classEnemy!!.hurt()
+                }
+            }
+        }
+    }
+
+    fun hurt(){
+        println(health)
+        if (health <= 0){
+            health = 0
+            die()
+        }
     }
 
     fun playerCollisionCheck(){
@@ -173,6 +212,7 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
                 KeyEvent.VK_A -> horizontalInput = -1
                 KeyEvent.VK_S -> verticalInput = 1
                 KeyEvent.VK_D -> horizontalInput = 1
+                KeyEvent.VK_SHIFT -> attack()
             }
         }
         //was it a release event
@@ -187,5 +227,12 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
             }
         }
         return false
+    }
+
+    private fun die(){
+        isDead = true
+        isVisible = false
+        playerAnimator.stopAnimation()
+        playerCollider.destroyCollider()
     }
 }

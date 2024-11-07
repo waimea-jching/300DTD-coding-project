@@ -1,0 +1,47 @@
+<html>
+<head>
+<title>Animation.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #cf8e6d;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Animation.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">//=============================================================================================</span>
+
+
+<span class="s1">import java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.*</span>
+<span class="s1">import javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.*</span>
+
+
+<span class="s0">//=============================================================================================</span>
+
+<span class="s3">class </span><span class="s1">Animation</span><span class="s2">(</span><span class="s1">private </span><span class="s3">val </span><span class="s1">imagePaths : MutableList</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">&gt;, </span><span class="s3">val </span><span class="s1">animationSpeed : Int</span><span class="s2">, </span><span class="s1">private </span><span class="s3">val </span><span class="s1">bounds: Rectangle</span><span class="s2">){</span>
+    <span class="s0">//frames list</span>
+    <span class="s3">val </span><span class="s1">frames </span><span class="s2">= </span><span class="s1">mutableListOf</span><span class="s2">&lt;</span><span class="s1">ImageIcon</span><span class="s2">&gt;()</span>
+
+    <span class="s1">init </span><span class="s2">{</span>
+        <span class="s1">loadImages</span><span class="s2">()</span>
+    <span class="s2">}</span>
+
+    <span class="s1">private </span><span class="s3">fun </span><span class="s1">loadImages</span><span class="s2">() {</span>
+        <span class="s3">for </span><span class="s2">(</span><span class="s1">path </span><span class="s3">in </span><span class="s1">imagePaths</span><span class="s2">) {</span>
+            <span class="s0">//grab image from package</span>
+            <span class="s3">var </span><span class="s1">image </span><span class="s2">= </span><span class="s1">ImageIcon</span><span class="s2">(</span><span class="s1">path</span><span class="s2">).</span><span class="s1">image</span>
+            <span class="s0">//scale image</span>
+            <span class="s1">image </span><span class="s2">= </span><span class="s1">image</span><span class="s2">.</span><span class="s1">getScaledInstance</span><span class="s2">(</span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">width</span><span class="s2">, </span><span class="s1">bounds</span><span class="s2">.</span><span class="s1">height</span><span class="s2">, </span><span class="s1">Image</span><span class="s2">.</span><span class="s1">SCALE_SMOOTH</span><span class="s2">)</span>
+            <span class="s3">val </span><span class="s1">imageIcon </span><span class="s2">= </span><span class="s1">ImageIcon</span><span class="s2">(</span><span class="s1">image</span><span class="s2">)</span>
+            <span class="s1">frames</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">imageIcon</span><span class="s2">)</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+<span class="s2">}</span></pre>
+</body>
+</html>

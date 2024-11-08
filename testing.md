@@ -29,4 +29,4 @@ The game has the following features and/or rules:
 
 In the following video i demonstrate - the game running, the player moving as well as random enemy spawns , enemies chasing player, UI updating, the game ending when the player is dead
 
-<video src="src/videos/Dungeon Knight 2024-11-08 21-22-53.mp4" width="800" height="600" controls></video>
+[video](src/videos/Dungeon Knight 2024-11-08 21-22-53.mp4)

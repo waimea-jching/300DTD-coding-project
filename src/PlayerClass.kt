@@ -28,7 +28,7 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
     //Attacking
     private var hitBox : Rectangle = Rectangle(0, 0, 0, 0)
     private val hitArea = 40
-    private val damage : Int = 25
+    private val damage : Int = 20
 
     //Health
     var health : Int = 100
@@ -218,7 +218,7 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
                 KeyEvent.VK_A -> if (horizontalInput != 1) horizontalInput = 0
                 KeyEvent.VK_S -> if (verticalInput != -1)verticalInput = 0
                 KeyEvent.VK_D -> if (horizontalInput != -1) horizontalInput = 0
-                KeyEvent.VK_SHIFT -> attack()
+                KeyEvent.VK_SPACE -> attack()
             }
         }
         return false

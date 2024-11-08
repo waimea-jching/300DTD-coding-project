@@ -1,4 +1,4 @@
-# Tomb Run
+# Dungeon Knight
 
 ### Level 3 Programming Project by Josiah Ching
 
@@ -8,10 +8,11 @@ This project is assessed against [AS91906](https://www.nzqa.govt.nz/nqfdocs/ncea
 
 The project involves the programming of a game.
 
-BRIEF PROJECT DESCRIPTION HERE
-BRIEF PROJECT DESCRIPTION HERE
-BRIEF PROJECT DESCRIPTION HERE
-BRIEF PROJECT DESCRIPTION HERE
+You are a knight in a dungeon fighting waves of enemies
+and need to survive as many waves as you possibly can. The
+player can walk around and attack the enemies. The enemies
+start chasing the player when he is in a close vicinity and
+when the player is extremely close they will attack the player.
 
 
 ## Source Code

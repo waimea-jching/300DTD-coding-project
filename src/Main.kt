@@ -4,8 +4,10 @@
 import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLaf
 import java.awt.*
+import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import javax.swing.ImageIcon
+import javax.swing.JButton
 import javax.swing.JLabel
 import javax.swing.SwingConstants
 import javax.swing.Timer
@@ -34,6 +36,8 @@ lateinit var background : JLabel
 
 //UI
 lateinit var playerHealthLabel : JLabel
+lateinit var wasdLabel : JLabel
+lateinit var spaceLabel : JLabel
 lateinit var waveLabel : JLabel
 lateinit var gameOverLabel : JLabel
 lateinit var highScorelabel : JLabel
@@ -48,6 +52,12 @@ val waveTimer : Timer = Timer(800, waveTimerListener)
 //Player Instance
 lateinit var player : Player
 
+//Flat, Dark look
+val flatLafFont = FlatLaf.getPreferredFontFamily()
+val baseFont = Font(flatLafFont, Font.PLAIN, 20)
+val bigFont = Font(flatLafFont, Font.PLAIN, 100)
+val titleFont = Font(flatLafFont, Font.PLAIN, 40)
+
 fun main(){
     startGame()
 }
@@ -55,9 +65,6 @@ fun main(){
 fun startGame(){
     //Flat, Dark look
     FlatDarkLaf.setup()
-    val flatLafFont = FlatLaf.getPreferredFontFamily()
-    val baseFont = Font(flatLafFont, Font.PLAIN, 20)
-    val bigFont = Font(flatLafFont, Font.PLAIN, 100)
 
     //Load background Icon
     var backgroundImage = ImageIcon("src/images/gridBackground.png").image
@@ -71,6 +78,16 @@ fun startGame(){
     playerHealthLabel.bounds = Rectangle(15, 565, 200, 20)
     playerHealthLabel.font = baseFont
     gameDisplay.add(playerHealthLabel)
+
+    wasdLabel = JLabel("wasd - move")
+    wasdLabel.bounds = Rectangle(15, 460, 200, 20)
+    wasdLabel.font = baseFont
+    gameDisplay.add(wasdLabel)
+
+    spaceLabel = JLabel("space - attack")
+    spaceLabel.bounds = Rectangle(15, 495, 200, 20)
+    spaceLabel.font = baseFont
+    gameDisplay.add(spaceLabel)
 
     waveLabel = JLabel("Wave: 1")
     waveLabel.bounds = Rectangle(15, 530, 200, 20)

@@ -16,10 +16,9 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
     //Attacking
     private var hitBox : Rectangle = Rectangle(0, 0, 0, 0)
     private val hitArea = 25
-    private val damage : Int = 7
-    private val tps : Int = 1
+    private val damage : Int = 5
     private val attackListener : ActionListener = ActionListener {attack()}
-    val attackTimer : Timer = Timer(tps * 1000, attackListener)
+    val attackTimer : Timer = Timer(1200, attackListener)
 
     //Health
     var health : Int = 100

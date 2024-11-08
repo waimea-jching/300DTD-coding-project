@@ -114,6 +114,8 @@ class Collider(var classPlayer : Player?, var classEnemy: Enemy?, private var bo
     }
 
     fun destroyCollider() {
-        globalColliders.remove(this)
+        if (globalColliders.contains(this)){
+            globalColliders.remove(this)
+        }
     }
 }

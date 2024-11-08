@@ -19,7 +19,7 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
     private val damage : Int = 7
     private val tps : Int = 1
     private val attackListener : ActionListener = ActionListener {attack()}
-    private val attackTimer : Timer = Timer(tps * 1000, attackListener)
+    val attackTimer : Timer = Timer(tps * 1000, attackListener)
 
     //Health
     var health : Int = 100
@@ -44,7 +44,7 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
         enemyCollider = Collider(null, this, bounds, gameDisplay)
         enemyAnimator = Animator()
 
-        while (enemyCollider.isColliding()){
+        if (enemyCollider.isColliding()){
             spawn()
         }
 
@@ -99,14 +99,12 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
     }
 
     fun attack(){
-        player.health -= damage
-        player.hurt()
+        player.hurt(damage)
     }
 
-    fun hurt(){
-        println("Hurt")
-        if (health <= 0) {
-            health = 0
+    fun hurt(damage : Int){
+        health -= damage
+        if (health <= 0 && !isDead) {
             die()
         }
     }
@@ -250,6 +248,5 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
         this.isVisible = false
         enemyCollider.destroyCollider()
         enemyAnimator.stopAnimation()
-        gameDisplay.background.remove(this)
     }
 }

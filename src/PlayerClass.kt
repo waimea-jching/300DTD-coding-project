@@ -180,20 +180,15 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
         val hits = playerCollider.getCustomCollision(hitBox)
         if (hits.isNotEmpty()) {
             for (hit in hits) {
-                if (hit.classPlayer != null){
-                    hit.classPlayer!!.health -= damage
-                    hit.classPlayer!!.hurt()
-                }
                 if (hit.classEnemy != null){
-                    hit.classEnemy!!.health -= damage
-                    hit.classEnemy!!.hurt()
+                    hit.classEnemy?.hurt(damage)
                 }
             }
         }
     }
 
-    fun hurt(){
-        println(health)
+    fun hurt(damage : Int){
+        health -= damage
         if (health <= 0){
             health = 0
             die()
@@ -212,7 +207,6 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
                 KeyEvent.VK_A -> horizontalInput = -1
                 KeyEvent.VK_S -> verticalInput = 1
                 KeyEvent.VK_D -> horizontalInput = 1
-                KeyEvent.VK_SHIFT -> attack()
             }
         }
         //was it a release event
@@ -224,6 +218,7 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
                 KeyEvent.VK_A -> if (horizontalInput != 1) horizontalInput = 0
                 KeyEvent.VK_S -> if (verticalInput != -1)verticalInput = 0
                 KeyEvent.VK_D -> if (horizontalInput != -1) horizontalInput = 0
+                KeyEvent.VK_SHIFT -> attack()
             }
         }
         return false
@@ -232,7 +227,5 @@ class Player(private val gameDisplay: Display): JLabel(), KeyEventDispatcher {
     private fun die(){
         isDead = true
         isVisible = false
-        playerAnimator.stopAnimation()
-        playerCollider.destroyCollider()
     }
 }

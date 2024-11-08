@@ -10,7 +10,7 @@ import kotlin.math.abs
 
 
 class Collider(var classPlayer : Player?, var classEnemy: Enemy?, private var bounds : Rectangle, private val gameDisplay: Display){
-
+    //variables
     private val displayBoundary : Dimension = gameDisplay.displayBoundary
     private var collisionBodys = mutableListOf<Rectangle>()
 
@@ -30,10 +30,12 @@ class Collider(var classPlayer : Player?, var classEnemy: Enemy?, private var bo
     fun isColliding() : Boolean{
         var isColliding = false
 
+        // create a slight padding for collision checking
         val padding = 10
         val sensitivePadding = 13
         val paddedBounds = Rectangle(bounds.x - padding, bounds.y - padding, bounds.width + sensitivePadding, bounds.height + sensitivePadding)
 
+        //loop through all colliders to see if there is an intersection
         for (collider in globalColliders){
             if (collider != this){
                 if (paddedBounds.intersects(collider.bounds)) {

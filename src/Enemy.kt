@@ -7,7 +7,7 @@ import kotlin.random.Random
 import javax.swing.Timer
 
 class Enemy(private val gameDisplay: Display, private val player : Player) : JLabel() {
-
+    //components
     val enemyAnimator : Animator
     val enemyCollider : Collider
 
@@ -18,18 +18,20 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
     private val hitArea = 25
     private val damage : Int = 5
     private val attackListener : ActionListener = ActionListener {attack()}
-    val attackTimer : Timer = Timer(1200, attackListener)
+    val attackTimer : Timer = Timer(900, attackListener)
 
     //Health
     var health : Int = 100
     var isDead = false
 
+    //Animations
     private lateinit var idleAnimation : Animation
     private lateinit var idleLAnimation : Animation
     private lateinit var runAnimation : Animation
     private lateinit var runLAnimation : Animation
     private var isLeft : Boolean = false
 
+    //movement
     private val aggressionDistance : Int = 120
     private val aggressionPadding : Int = 3
     private var isNearPlayer : Boolean = false
@@ -47,6 +49,7 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
             spawn()
         }
 
+        //create the attack area hit box
         hitBox = Rectangle(bounds.x - hitArea, bounds.y - hitArea, bounds.width + (hitArea * 2), bounds.height + (hitArea * 2))
 
         if (Random.nextInt(0, 1) == 1) isLeft = true
@@ -58,9 +61,13 @@ class Enemy(private val gameDisplay: Display, private val player : Player) : JLa
     }
 
     fun checkForPlayer() {
+        //create check areas
         val aggressionBounds = Rectangle (bounds.x - aggressionDistance, bounds.y - aggressionDistance,  bounds.width + (aggressionDistance * 2), bounds.height + (aggressionDistance * 2))
         hitBox = Rectangle(bounds.x - hitArea, bounds.y - hitArea, bounds.width + (hitArea * 2), bounds.height + (hitArea * 2))
+
+        //check if they intersect with player
         isNearPlayer = aggressionBounds.intersects(player.bounds)
+
         canAttack = hitBox.intersects(player.bounds)
         if (canAttack) attackTimer.start()
         else attackTimer.stop()

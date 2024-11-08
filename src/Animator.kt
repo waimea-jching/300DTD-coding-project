@@ -10,7 +10,7 @@ import javax.swing.Timer
 
 
 class Animator() {
-    //animation class
+    //runtime variables
     private lateinit var currentAnimation : Animation
     private var currentAnimationFrame : ImageIcon = ImageIcon()
     private var animationIndex: Int = 0
@@ -19,6 +19,7 @@ class Animator() {
     private var animationSpeed : Int = 0
     var loop : Boolean = true
 
+    //animation Timer variables
     private lateinit var animationTimer: Timer
     private val animationListener : ActionListener = ActionListener {updateAnimation()}
 

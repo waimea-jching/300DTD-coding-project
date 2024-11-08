@@ -4,10 +4,8 @@
 import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLaf
 import java.awt.*
-import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import javax.swing.ImageIcon
-import javax.swing.JButton
 import javax.swing.JLabel
 import javax.swing.SwingConstants
 import javax.swing.Timer
@@ -23,10 +21,6 @@ import kotlin.random.Random
  * Level 3 programming project
  *
  * by Josiah Ching
- *
- * BRIEF PROJECT DESCRIPTION HERE
- * BRIEF PROJECT DESCRIPTION HERE
- * BRIEF PROJECT DESCRIPTION HERE
  * ------------------------------------------------------------------------
  */
 
@@ -34,7 +28,7 @@ import kotlin.random.Random
 lateinit var gameDisplay : Display
 lateinit var background : JLabel
 
-//UI
+//UI & UI Variables
 lateinit var playerHealthLabel : JLabel
 lateinit var wasdLabel : JLabel
 lateinit var spaceLabel : JLabel
@@ -43,8 +37,8 @@ lateinit var gameOverLabel : JLabel
 lateinit var highScorelabel : JLabel
 var highScore : Int = 0
 
-//Enemys
-val enemys = mutableListOf<Enemy>()
+//Enemies
+val enemies = mutableListOf<Enemy>()
 var waveNumber : Int = 1
 val waveTimerListener : ActionListener = ActionListener {nextWave()}
 val waveTimer : Timer = Timer(800, waveTimerListener)
@@ -52,7 +46,7 @@ val waveTimer : Timer = Timer(800, waveTimerListener)
 //Player Instance
 lateinit var player : Player
 
-//Flat, Dark look
+//Fonts
 val flatLafFont = FlatLaf.getPreferredFontFamily()
 val baseFont = Font(flatLafFont, Font.PLAIN, 20)
 val bigFont = Font(flatLafFont, Font.PLAIN, 100)
@@ -71,9 +65,10 @@ fun startGame(){
     backgroundImage = backgroundImage.getScaledInstance(800, 600, Image.SCALE_SMOOTH)
     val backgroundIcon = ImageIcon(backgroundImage)
 
-    //Create displays
+    //Create Display
     gameDisplay = Display("Dungeon Knight", Dimension(800, 600), Dimension(800,600))
 
+    //Building UI
     playerHealthLabel = JLabel("Health: 100/100")
     playerHealthLabel.bounds = Rectangle(15, 565, 200, 20)
     playerHealthLabel.font = baseFont
@@ -125,15 +120,18 @@ fun startGame(){
 }
 
 fun update(){
+    //Update UI
     playerHealthLabel.text = "Health: ${player.health}/100"
     waveLabel.text = "Wave: $waveNumber"
 
+    //Update Player
     if (player.isDead) playerDied()
     player.playerCollisionCheck()
     player.animatePlayer()
     player.movePlayer()
 
-    for (enemy in enemys) {
+    //Update Enemies
+    for (enemy in enemies) {
         if (!enemy.isDead) {
             enemy.enemyCollisionCheck()
             enemy.checkForPlayer()
@@ -141,14 +139,13 @@ fun update(){
             enemy.moveEnemy()
         }
     }
-
     var enemyCounter = 0
-    for (enemy in enemys) {
+    for (enemy in enemies) {
         if (enemy.isDead){
             enemyCounter ++
         }
     }
-    if (enemyCounter == enemys.count()){
+    if (enemyCounter == enemies.count()){
         waveTimer.start()
     }
 }
@@ -156,7 +153,7 @@ fun update(){
 fun addEnemys(){
     val numberOfEnemys = Random.nextInt(waveNumber ,waveNumber + 2)
     repeat(numberOfEnemys) {
-        enemys.add(Enemy(gameDisplay, player))
+        enemies.add(Enemy(gameDisplay, player))
     }
 }
 
@@ -164,10 +161,10 @@ fun nextWave(){
     waveTimer.stop()
     waveNumber++
 
-    for (enemy in enemys) {
+    for (enemy in enemies) {
         background.remove(enemy)
     }
-    enemys.clear()
+    enemies.clear()
 
     addEnemys()
 }
@@ -175,7 +172,7 @@ fun nextWave(){
 fun playerDied() {
     playerHealthLabel.text = "Health: ${player.health}/100"
     updateTimer.stop()
-    for (enemy in enemys){
+    for (enemy in enemies){
         enemy.attackTimer.stop()
     }
     if (waveNumber >= highScore){

@@ -49,10 +49,10 @@ val waveTimer : Timer = Timer(800, waveTimerListener)
 lateinit var player : Player
 
 fun main(){
-    awake()
+    startGame()
 }
 
-fun awake(){
+fun startGame(){
     //Flat, Dark look
     FlatDarkLaf.setup()
     val flatLafFont = FlatLaf.getPreferredFontFamily()

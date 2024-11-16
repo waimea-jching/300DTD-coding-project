@@ -30,3 +30,6 @@ The game has the following features and/or rules:
 In the following video i demonstrate - the game running, the player moving as well as random enemy spawns , enemies chasing player, UI updating, the game ending when the player is dead
 
 The video is located inside the video folder that is within the src folder.
+
+[Video](src/videos/Dungeon%20Knight%202024-11-08%2021-22-53.mp4)
+
